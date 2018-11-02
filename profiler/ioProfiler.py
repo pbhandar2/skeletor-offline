@@ -106,12 +106,15 @@ class IOProfiler():
 
         f = open(filename, "w+")
 
-        for key in sorted(list(self.block_data.keys()), reverse=True):
-            if (key != "reverse"):
-                print(key)
-                # v = self.block_data[key]
-                # f.write(" ".join(v))
-                # f.write("\n")
+        # how do I get the keys in reverse sorted order? 
+
+        key_list = lambda x: int(x)
+
+        for key in sorted(key_list, reverse=True):
+            print(key)
+            # v = self.block_data[key]
+            # f.write(" ".join(v))
+            # f.write("\n")
 
 
     def get_access_matrix_row(self, index):
