@@ -112,9 +112,15 @@ class IOProfiler():
         # f = open(filename, "w+")
         # print("Checkpoint 3")
 
-      
-        for key in sorted(self.block_data.keys(), reverse=True):
+        keys = sorted(self.block_data.keys(), reverse=True)
+
+        print(keys)
+
+        for key in keys:
             print(key)
+      
+        # for key in sorted(keys, reverse=True):
+        #     print(key)
      
         # for i in range(max_block, min_block - 1, -1):
         #     if i in self.block_list:
