@@ -7,8 +7,11 @@ Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 """
 
 from traceReader.abstractReader import AbstractReader
+
+# it wouldn't work without this in mjolnir
 import matplotlib
 matplotlib.use("agg")
+
 import matplotlib.pyplot as plt
 import math
 import collections
@@ -91,22 +94,28 @@ class IOProfiler():
             print("Info for {} len is {}".format(data_type, len(self.data[data_type])))
 
     def get_access_matrix(self, filename):
-        print("Checkpoint 1")
+        """
+        Get the access pattern in matrix form. Each row correspond to an LBNs access pattern 
+        over time. 
+        Params:
+            filename -- the filename to use to save the matrix data
+        """
+
         if (self.length == -1):
             metric_calculator()
-        print("Checkpoint 2")
 
+        # f = open(filename, "w+")
+        # for k,v in collections.OrderedDict(reversed(list(self.block_data.items()))).items():
+        #     f.write(" ".join(str(x) for x in self.get_access_matrix_row(v)))
 
-        for k,v in collections.OrderedDict(reversed(list(self.block_data.items()))).items():
-            print(k)
         # [min_block, max_block] = self.min_max_data["block"]
         # f = open(filename, "w+")
         # print("Checkpoint 3")
 
-        # """
-        #     for key in sorted(self.block_data.keys(), reverse=True)
-        # """
-
+      
+        for key in sorted(self.block_data.keys(), reverse=True):
+            print(key)
+     
         # for i in range(max_block, min_block - 1, -1):
         #     if i in self.block_list:
         #         print(i)
