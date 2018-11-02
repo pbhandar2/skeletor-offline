@@ -310,7 +310,7 @@ class IOProfiler():
             self.update_field("access_time", line_data["time"], "append")
             #print("Updated Access Time.")
             self.update_field("block", cur_block, "append")
-            self.process_block(cur_block, len(self.data["access_time"]))
+            self.process_block(int(cur_block), len(self.data["access_time"]))
             cur_block += block_size
 
         #print("Processing size completed.")
