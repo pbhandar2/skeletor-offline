@@ -19,6 +19,7 @@ MSR_format = {
     "file_format": "gz",
     "delimiter": ",",
     "format": "gz",
+    "block_size": 512,
     "fields": {
       "time": {
         "index": 0,
@@ -40,7 +41,7 @@ MSR_format = {
           "write": "Write"
         }
       },
-      "offset": {
+      "block": {
         "index": 4,
         "type": "integer"
       },

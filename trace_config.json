@@ -4,6 +4,9 @@
     "file_format": "gz",
     "delimiter": ",",
     "format": "gz",
+    "block_size": 512,
+    "time_type": "timestamp",
+    "block_type": "offset",
     "fields": {
       "time": {
         "index": 0,
@@ -25,7 +28,7 @@
           "write": "Write"
         }
       },
-      "offset": {
+      "block": {
         "index": 4,
         "type": "integer"
       },
