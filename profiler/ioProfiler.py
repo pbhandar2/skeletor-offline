@@ -7,6 +7,8 @@ Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 """
 
 from traceReader.abstractReader import AbstractReader
+import matplotlib
+matplotlib.use("agg")
 import matplotlib.pyplot as plt
 import math
 import collections
@@ -91,7 +93,6 @@ class IOProfiler():
             metric_calculator()
         print("Checkpoint 2")
 
-        
 
         for k,v in collections.OrderedDict(reversed(list(self.block_data.items()))).items():
             print(k)
