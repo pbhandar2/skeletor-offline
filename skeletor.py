@@ -74,10 +74,14 @@ class skeletor:
             file_format -- The format of the file.
         """
 
+        block_size = -1
+        if "block_size" in kwargs:
+            block_size = kwargs["block_size"]
+
         if "trace_type" in kwargs:
             trace_type = kwargs["trace_type"]
             if (trace_type == "MSR_Cambridge"):
-                self.reader = gzReader(file_loc, MSR_format["delimiter"], MSR_format["fields"], trace_type)
+                self.reader = gzReader(file_loc, MSR_format["delimiter"], MSR_format["fields"], trace_type, block_size=MSR_format["block_size"])
             elif (trace_type == "custom" or trace_type == None):
                 # if file type is not speicified expecting the file format at least
                 if (kwargs["file_format"] == None):

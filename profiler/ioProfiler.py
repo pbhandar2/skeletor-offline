@@ -69,12 +69,9 @@ class IOProfiler():
         """
 
         line = self.reader.get_next_line()
-        start_time = -1
-        count = 0
-
         while(line):
-
             line_data = self.get_line_data(line)
+            #print("Got line data for time {}".format(line_data["time"]))
             self.update_data(line_data)
 
             # # the fields provided by the user
@@ -104,11 +101,13 @@ class IOProfiler():
 
             line = self.reader.get_next_line()
 
-            count += 1
 
-        self.length = cur_time - start_time
+        self.length = self.data["time"][-1] - self.data["time"][0]
         print(self.min_max_data)
-        bucks = self.bucket_time(5)
+        print(self.length)
+
+        for data_type in self.data:
+            print("Info for {} len is {}".format(data_type, len(self.data[data_type])))
 
     def get_field_matrix(self, field, filename):
         """
@@ -122,26 +121,61 @@ class IOProfiler():
         # how do I use the buckets here?
         range_lbn = self.min_max_data[field][1] - self.min_max_data[field][0]
         length = self.length
+        f = open(filename, "w+")
+
 
         # for i in range lbn values check the blocks dict and see when it is implemented 
         # I have the range for the time so I know how many to use 
         # binsize can tell me and give me value maybe, need to store the bins as well
 
+    def get_access_matrix(self, filename):
+
+        if (self.length == -1):
+            metric_calculator()
+
+        [min_block, max_block] = self.min_max_data["block"]
+        f = open(filename, "w+")
+
+        for i in range(max_block, min_block - 1, -1):
+            if i in self.block_list:
+                block_data = self.block_data[i]
+                f.write(" ".join(str(x) for x in self.get_access_matrix_row(block_data)))
+
+    def get_access_matrix_row(index):
+        row = [0] * len(self.data["access_time"])
+        for i in index:
+            row[i] += 1
+        return row
 
     def update_data(self, line_data):
+        #print("The line data is {}".format(line_data))
         for field in line_data:
+            #print("Updating field: {}".format(field))
+            field_object = self.reader.fields[field]
             if (field == "io_type"):
-                field_value = self.process_io_type(line_array, field_index, field_object["values"])
+                field_value = self.match_with_value(line_data[field], field_object["values"])
+                self.update_field(field, field_value, "append")
             elif (field == "time"):
-                field_value = line_data[cur_time]
+                field_value = line_data[field]
+                self.update_field(field, field_value, "append")
+                self.update_field("access_time", field_value, "append")
                 if (self.start_time == -1):
                     self.start_time = field_value
             elif (field == "size"):
-                field_value = line_data[cur_time]
+                field_value = line_data[field]
+                self.update_field(field, field_value, "append")
+                if (self.reader.block_size > 0):
+                    self.process_size(line_data)
             elif (field == "block"):
-                field_value = line_data[cur_time]
-                
-    
+                field_value = line_data[field]
+                self.update_field(field, field_value, "append")
+                self.process_block(field_value, len(self.data["access_time"]))
+            else:
+                field_value = line_data[field]
+                self.update_field(field, field_value, "append")
+
+        #print("Finished updating the data!")
+
     def get_line_data(self, line):
         line_data = {}
         for field in self.reader.fields:
@@ -153,24 +187,32 @@ class IOProfiler():
 
         return line_data
 
-
-
-
-    def update_data(field, field_value, field_type):
+    def update_field(self, field, field_value, update_type):
 
         # if the field is in the data struct
         if field in self.data:
-            self.data[field].append(field_value)
-            min_max_array = self.min_max_data[field]
-            if (field_type == "integer" or field_type == "float"):
-                self.min_max_data[field] = [min(field_value, min_max_array[0]), max(field_value, min_max_array[1])]
+            if (update_type == "append"):
+                self.data[field].append(field_value)
+            elif (update_type == "add"):
+                self.data[field] += 1
+            else:
+                raise ValueError("The value provided as update_type does not exist.")
         else:
-            self.data[field] = [field_value]
-            self.min_max_data[field] = [field_value, field_value]
+            if (update_type == "append"):
+                self.data[field] = [field_value]
+            elif (update_type == "add"):
+                self.data[field] = 1
+            else:
+                raise ValueError("The value provided as update_type does not exist.")
 
-
-
-
+        # if it is a numeric or float value extract the min and max for it 
+        if (isinstance(field_value, int) or isinstance(field_value, float)):
+            min_max_array = self.min_max_data
+            if field in min_max_array:
+                self.min_max_data[field] = [min(field_value, min_max_array[field][0]), max(field_value, min_max_array[field][1])]
+            else:
+                self.min_max_data[field] = [field_value, field_value]
+            
 
     def plot_distribution(self, field, file_name, colorField=None, dpi=1200):
         """
@@ -207,10 +249,6 @@ class IOProfiler():
             time = self.bucket_time(binSize)
         else:
             time = self.data["time"]
-
-        #print(len(set(time)))
-        #print(len(self.data["time"]))
-        #print(self.data["time"][:20])
 
         plt.scatter(time, self.data[field], color=color_array, s=markerSize, alpha=0.1)
         plt.xlabel("time")
@@ -254,14 +292,31 @@ class IOProfiler():
 
     def process_size(self, line_data):
         """
-        Do proessing based on the value of the size
+        Do proessing based on the value of the size in line data.
+        Params:
+            line_data -- all relevant data for the given line. 
         """
+        
 
         size = line_data["size"]
+        block_size = self.reader.block_size
+        block = line_data["block"]
+        cur_block = block + block_size
 
+        #print("Processing size started for size {} and block {}".format(size, cur_block))
+
+        while(cur_block < block+size):
+            self.update_field("access_time", line_data["time"], "append")
+            #print("Updated Access Time.")
+            self.update_field("block", cur_block, "append")
+            self.process_block(cur_block, len(self.data["access_time"]))
+            cur_block += block_size
+
+        #print("Processing size completed.")
 
 
     def process_block(self, block, index):
+        # print("Processing the block {}".format(block))
         # need to update the dict with the value of time and also the index in time array 
         self.block_list.add(block)
         if block in self.block_data:

@@ -17,6 +17,8 @@ profiler = processor.get_io_profiler()
 
 profiler.metric_calculator()
 
+profiler.get_access_matrix("matrix.dat")
+
 #profiler.plot_distribution("offset", "./test_fig.svg")
 
 #profiler.plot_scatter("block", "./test_scatter_0.1_5bin.png", binSize=5, markerSize=5)
