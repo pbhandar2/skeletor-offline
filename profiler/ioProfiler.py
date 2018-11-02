@@ -313,11 +313,11 @@ class IOProfiler():
             index -- this represents the current time 
         """
         # print("Processing the block {}".format(block))
-        self.block_list.add(str(block))
+        self.block_list.add(block)
         if block in self.block_data:
-            self.block_data[block].append(str(index))
+            self.block_data[block].append(index)
         else:
-            self.block_data[block] = [str(index)]
+            self.block_data[block] = [index]
 
 
 
