@@ -91,7 +91,9 @@ class IOProfiler():
             metric_calculator()
         print("Checkpoint 2")
 
-        for k,v in self.block_data.items():
+        
+
+        for k,v in collections.OrderedDict(reversed(list(self.block_data.items()))).items():
             print(k)
         # [min_block, max_block] = self.min_max_data["block"]
         # f = open(filename, "w+")
@@ -115,6 +117,12 @@ class IOProfiler():
         return row
 
     def update_data(self, line_data):
+        """
+        Once the data is extracted from a line. This function is used to update the data for 
+        each data extracted from the line. 
+        Params:
+            line -- The data extracted from a line. 
+        """
         #print("The line data is {}".format(line_data))
         for field in line_data:
             #print("Updating field: {}".format(field))
@@ -144,6 +152,12 @@ class IOProfiler():
         #print("Finished updating the data!")
 
     def get_line_data(self, line):
+        """
+        Uses the field dict to extract all the information that it can from a given 
+        line. 
+        Params:
+            line -- the line in string form. 
+        """
         line_data = {}
         for field in self.reader.fields:
             field_object = self.reader.fields[field]
@@ -155,7 +169,13 @@ class IOProfiler():
         return line_data
 
     def update_field(self, field, field_value, update_type):
-
+        """
+        This functions updates a given field of the data dictionary.  
+        Params:
+            field -- the field to be updated.
+            field_value -- tthe value of the field
+            update_type -- what kind of update to perform, append, add, subtract? 
+        """
         # if the field is in the data struct
         if field in self.data:
             if (update_type == "append"):
@@ -259,11 +279,12 @@ class IOProfiler():
 
     def process_size(self, line_data):
         """
-        Do proessing based on the value of the size in line data.
+        Do proessing based on the value of the size in line data. If the access is of size 1024
+        and the block size is 512 then it means that the current and the next block is accessed 
+        and both need to be accounted for. 
         Params:
             line_data -- all relevant data for the given line. 
         """
-        
 
         size = line_data["size"]
         block_size = self.reader.block_size
@@ -283,8 +304,14 @@ class IOProfiler():
 
 
     def process_block(self, block, index):
+        """
+        Update information on the blocks. A set maintains the unique blocks and blocks_data maintains
+        the access pattern of each block. 
+        Params:
+            block -- the block number. 
+            index -- this represents the current time 
+        """
         # print("Processing the block {}".format(block))
-        # need to update the dict with the value of time and also the index in time array 
         self.block_list.add(str(block))
         if block in self.block_data:
             self.block_data[block].append(str(index))
