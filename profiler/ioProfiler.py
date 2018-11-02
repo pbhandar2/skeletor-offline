@@ -9,6 +9,7 @@ Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 from traceReader.abstractReader import AbstractReader
 import matplotlib.pyplot as plt
 import math
+import collections
 
 func_map = {
     "float":  lambda x: float(x),
@@ -26,7 +27,7 @@ class IOProfiler():
         self.reader = reader
         self.data = {}
         self.min_max_data = {}
-        self.block_data = {}
+        self.block_data = collections.OrderedDict(reverse=True)
         self.length = -1
         self.block_size = block_size
         self.block_list = set([])
@@ -69,36 +70,11 @@ class IOProfiler():
         """
 
         line = self.reader.get_next_line()
+        count= 0;
         while(line):
             line_data = self.get_line_data(line)
             #print("Got line data for time {}".format(line_data["time"]))
             self.update_data(line_data)
-
-            # # the fields provided by the user
-            # for field in self.reader.fields:
-            #     field_object = self.reader.fields[field]
-            #     field_type = field_object["type"]
-            #     field_index = field_object["index"]
-            #     line_array = line.split(self.reader.delimiter)
-
-            #     if (field == "io_type"):
-            #         field_value = self.process_io_type(line_array, field_index, field_object["values"])
-            #     elif (field == "time"):
-            #         cur_time = func_map[field_type](line_array[field_index])
-            #         field_value = cur_time
-            #         # record the start time
-            #         if (start_time == -1):
-            #             start_time = cur_time
-            #     elif (field == "size"):
-            #         field_value = func_map[field_type](line_array[field_index])
-            #     elif (field == "block"):
-            #         field_value = func_map[field_type](line_array[field_index])
-            #         process_block(field_value, count)
-            #     else:
-            #         field_value = func_map[field_type](line_array[field_index])
-
-            #     update_data(field, field_value, field_type)
-
             line = self.reader.get_next_line()
 
 
@@ -109,39 +85,30 @@ class IOProfiler():
         for data_type in self.data:
             print("Info for {} len is {}".format(data_type, len(self.data[data_type])))
 
-    def get_field_matrix(self, field, filename):
-        """
-            What I need to do is go through each offset value and get the indexes at which that offset values appears.
-            After that create an array by putting 1 in where it was accessed and zero otherwise. Is there going to be a
-
-        """
-
-        # get the range of lbn numbers
-        # get the time and create a matrix
-        # how do I use the buckets here?
-        range_lbn = self.min_max_data[field][1] - self.min_max_data[field][0]
-        length = self.length
-        f = open(filename, "w+")
-
-
-        # for i in range lbn values check the blocks dict and see when it is implemented 
-        # I have the range for the time so I know how many to use 
-        # binsize can tell me and give me value maybe, need to store the bins as well
-
     def get_access_matrix(self, filename):
-
+        print("Checkpoint 1")
         if (self.length == -1):
             metric_calculator()
+        print("Checkpoint 2")
 
-        [min_block, max_block] = self.min_max_data["block"]
-        f = open(filename, "w+")
+        for k,v in self.block_data.items():
+            print(k)
+        # [min_block, max_block] = self.min_max_data["block"]
+        # f = open(filename, "w+")
+        # print("Checkpoint 3")
 
-        for i in range(max_block, min_block - 1, -1):
-            if i in self.block_list:
-                block_data = self.block_data[i]
-                f.write(" ".join(str(x) for x in self.get_access_matrix_row(block_data)))
+        # """
+        #     for key in sorted(self.block_data.keys(), reverse=True)
+        # """
 
-    def get_access_matrix_row(index):
+        # for i in range(max_block, min_block - 1, -1):
+        #     if i in self.block_list:
+        #         print(i)
+        #         block_data = self.block_data[i]
+        #         f.write(" ".join(self.get_access_matrix_row(block_data)))
+        #         f.write("\n")
+
+    def get_access_matrix_row(self, index):
         row = [0] * len(self.data["access_time"])
         for i in index:
             row[i] += 1
@@ -318,11 +285,11 @@ class IOProfiler():
     def process_block(self, block, index):
         # print("Processing the block {}".format(block))
         # need to update the dict with the value of time and also the index in time array 
-        self.block_list.add(block)
+        self.block_list.add(str(block))
         if block in self.block_data:
-            self.block_data[block].append(index)
+            self.block_data[block].append(str(index))
         else:
-            self.block_data[block] = [index]
+            self.block_data[block] = [str(index)]
 
 
 
