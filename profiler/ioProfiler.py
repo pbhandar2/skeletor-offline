@@ -104,36 +104,15 @@ class IOProfiler():
         if (self.length == -1):
             metric_calculator()
 
-        # f = open(filename, "w+")
-        # for k,v in collections.OrderedDict(reversed(list(self.block_data.items()))).items():
-        #     f.write(" ".join(str(x) for x in self.get_access_matrix_row(v)))
+        f = open(filename, "w+")
 
-        # [min_block, max_block] = self.min_max_data["block"]
-        # f = open(filename, "w+")
-        # print("Checkpoint 3")
+        for key in sorted(list(self.block_data.keys()), reverse=True):
+            if (key != "reverse"):
+                print(key)
+                # v = self.block_data[key]
+                # f.write(" ".join(v))
+                # f.write("\n")
 
-        print(list(self.block_data.keys())[:5])
-
-        for key in list(self.block_data.keys()):
-            print("Key")
-            print(key)
-
-        # keys = sorted(self.block_data.keys(), reverse=True)
-
-        # print(keys)
-
-        # for key in keys:
-        #     print(key)
-      
-        # for key in sorted(keys, reverse=True):
-        #     print(key)
-     
-        # for i in range(max_block, min_block - 1, -1):
-        #     if i in self.block_list:
-        #         print(i)
-        #         block_data = self.block_data[i]
-        #         f.write(" ".join(self.get_access_matrix_row(block_data)))
-        #         f.write("\n")
 
     def get_access_matrix_row(self, index):
         row = [0] * len(self.data["access_time"])
