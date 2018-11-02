@@ -1,0 +1,42 @@
+[
+  {
+    "name": "MSR-Cambridge",
+    "file_format": "gz",
+    "delimiter": ",",
+    "format": "gz",
+    "fields": {
+      "time": {
+        "index": 0,
+        "type": "float"
+      },
+      "hostname": {
+        "index": 1,
+        "type": "string"
+      },
+      "disknumber": {
+        "index": 2,
+        "type": "integer"
+      },
+      "io_type": {
+        "index": 3,
+        "type": "string",
+        "values": {
+          "read": "Read",
+          "write": "Write"
+        }
+      },
+      "offset": {
+        "index": 4,
+        "type": "integer"
+      },
+      "size": {
+        "index": 5,
+        "type": "integer"
+      },
+      "response_time": {
+        "index": 6,
+        "type": "integer"
+      }
+    }
+  }
+]
