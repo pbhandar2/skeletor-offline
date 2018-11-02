@@ -32,7 +32,7 @@ class IOProfiler():
         self.reader = reader
         self.data = {
             "time": [],
-            "access-time": []
+            "access_time": []
         }
         self.min_max_data = {}
         self.block_data = collections.OrderedDict(reverse=True)
