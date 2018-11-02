@@ -27,7 +27,10 @@ class IOProfiler():
             "This is not a valid reader: {}".format(reader)
 
         self.reader = reader
-        self.data = {}
+        self.data = {
+            "time": [],
+            "access-time": []
+        }
         self.min_max_data = {}
         self.block_data = collections.OrderedDict(reverse=True)
         self.length = -1
