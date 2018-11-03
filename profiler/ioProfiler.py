@@ -108,7 +108,7 @@ class IOProfiler():
         for key in sorted(keys, reverse=True):
             print(key)
             v = self.block_data[key]
-            f.write(" ".join(v))
+            f.write(" ".join(map(str, v)))
             f.write("\n")
 
         # key_list = lambda x: int(x)
