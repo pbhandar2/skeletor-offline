@@ -2,7 +2,6 @@
 
 """
 The I/O profiler that gives the users the I/O metrics.
-
 Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 """
 
@@ -14,7 +13,6 @@ matplotlib.use("agg")
 
 import matplotlib.pyplot as plt
 import math
-import collections
 
 func_map = {
     "float":  lambda x: float(x),
@@ -35,7 +33,7 @@ class IOProfiler():
             "access_time": []
         }
         self.min_max_data = {}
-        self.block_data = collections.OrderedDict(reverse=True)
+        self.block_data = {}
         self.length = -1
         self.block_size = block_size
         self.block_list = set([])
@@ -105,14 +103,16 @@ class IOProfiler():
             metric_calculator()
 
         f = open(filename, "w+")
+        keys =  self.block_data.keys()
 
-        # how do I get the keys in reverse sorted order? 
-
-        key_list = lambda x: int(x)
-        sorted_key = sorted(key_list, reverse=True)
-
-        for key in sorted_key:
+        for key in sorted(keys, reverse=True):
             print(key)
+
+        # key_list = lambda x: int(x)
+        # sorted_key = sorted(key_list, reverse=True)
+
+        # for key in sorted_key:
+        #     print(key)
             # v = self.block_data[key]
             # f.write(" ".join(v))
             # f.write("\n")
