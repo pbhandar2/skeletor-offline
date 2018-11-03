@@ -109,8 +109,9 @@ class IOProfiler():
         # how do I get the keys in reverse sorted order? 
 
         key_list = lambda x: int(x)
+        sorted_key = sorted(key_list, reverse=True)
 
-        for key in sorted(key_list, reverse=True):
+        for key in sorted_key:
             print(key)
             # v = self.block_data[key]
             # f.write(" ".join(v))
