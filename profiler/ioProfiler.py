@@ -56,9 +56,9 @@ class IOProfiler():
             metric_calculator()
 
         bucket_diff = 1000000000 * bucket_size # readings are in nanosecond 
-        start = self.data["time"][0]
+        start = self.data["access_time"][0]
         bucket_array = [start]
-        for t in self.data["time"][1:]:
+        for t in self.data["access_time"][1:]:
             diff = t - start
             multiplier = math.floor(diff/bucket_diff)
             final_time = start + multiplier * bucket_diff
@@ -103,16 +103,72 @@ class IOProfiler():
             metric_calculator()
 
         f = open(filename, "w+")
-        keys =  self.block_data.keys()
 
-        for key in sorted(keys, reverse=True):
-            print(key)
-            v = self.block_data[key]
-            f.write(" ".join(map(str, self.get_access_matrix_row(v))))
-            f.write("\n")
+        blocks = sorted(list(self.block_list), reverse=True)
+        for block in blocks:
+            f.write(self.generate_matrix_row(block))
+            f.write('\n')
+
+        # keys =  self.block_data.keys()
+
+        # for key in sorted(keys, reverse=True):
+        #     print(key)
+        #     v = self.block_data[key]
+        #     f.write(" ".join(map(str, self.get_access_matrix_row(v))))
+        #     f.write("\n")
+
+
+    def generate_matrix_row(self, block):
+        block_data = self.block_data[block]
+        # print("We are in generate_matrix_row for block {}".format(block))
+        # print(self.block_data)
+        data_found = 0;
+        v = self.block_data[block]
+        data_string = ''
+        first_entry = v[0]
+        if (first_entry in block_data):
+            data_string="{}".format(1)
+        else:
+            data_string="{}".format(0)
+        
+
+        for i in range(1, self.reader.num_lines):
+            if (i in v):
+                data_string += ",{}".format(1)
+            else:
+                data_string += ",{}".format(0)
+
+        return data_string
+
+        # for block in blocks[:1]:
+        #     v = self.block_data[key]
+        #     print(",".join(map(str, self.get_access_matrix_row(v))))
+
+        # first_entry = block_data[0]
+        # if (first_entry in block_data) {
+        #     data_string="{}".format(1)
+        # } else {
+        #     data_string="{}".format(0)
+        # }
+
+        # for i in range(1, self.reader.num_lines):
+        #     if (i in block_data):
+        #         #print("The block was accessed at {}".format(i))
+        #         data_string = data_string + "," + str(1)
+        #         data_found += 1
+        #     else:
+        #         data_string = data_string + "," + str(0)
+
+        # print("Data found for the block {} and the total block data {}".format(data_found, len(block_data)))
+        # print(data_s)
 
 
     def get_access_matrix_row(self, index):
+        """
+        Based on at which indexes that the block is accessed, create the matrix rows. 
+        Params:
+            index -- array of indexes where a block was accessed. 
+        """
         row = [0] * len(self.data["access_time"])
         for i in index:
             row[i] += 1
@@ -237,7 +293,10 @@ class IOProfiler():
         if (binSize):
             time = self.bucket_time(binSize)
         else:
-            time = self.data["time"]
+            time = self.data["access_time"]
+
+        print("The len of time is {}".format(len(time)))
+        print("The len of the data is {}".format(len(self.data[field])))
 
         plt.scatter(time, self.data[field], color=color_array, s=markerSize, alpha=0.1)
         plt.xlabel("time")

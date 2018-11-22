@@ -12,7 +12,35 @@ Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 import gzip
 
 from traceReader.gzReader import gzReader
+from traceReader.txtReader import txtReader
 from profiler.ioProfiler import IOProfiler
+
+FIU_format =   {
+    "name": "FIU",
+    "file_format": "txt",
+    "delimiter": " ",
+    "format": "txt",
+    "time_type": "timestamp",
+    "block_type": "number",
+    "fields": {
+        "time": {
+            "index": 0,
+            "type": "integer"
+        },
+        "block": {
+            "index": 3,
+            "type": "integer"
+        },
+        "io_type": {
+            "index": 5,
+            "type": "string",
+            "values": {
+                "read": "R",
+                "write": "W"
+            }
+        }
+    }
+}
 
 MSR_format = {
     "name": "MSR-Cambridge",
@@ -82,6 +110,8 @@ class skeletor:
             trace_type = kwargs["trace_type"]
             if (trace_type == "MSR_Cambridge"):
                 self.reader = gzReader(file_loc, MSR_format["delimiter"], MSR_format["fields"], trace_type, block_size=MSR_format["block_size"])
+            elif (trace_type == "FIU"):
+                self.reader = txtReader(file_loc, FIU_format["delimiter"], FIU_format["fields"], trace_type)
             elif (trace_type == "custom" or trace_type == None):
                 # if file type is not speicified expecting the file format at least
                 if (kwargs["file_format"] == None):
@@ -111,7 +141,8 @@ class skeletor:
         """
         Returns the next line of the trace file.
         """
-        print("THIS IS THE I/O PROFILER.")
+        
+        #print("THIS IS THE I/O PROFILER.")
 
         if (self.reader):
             if (self.profiler == None):

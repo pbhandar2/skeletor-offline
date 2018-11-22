@@ -1,10 +1,14 @@
 from skeletor import skeletor
 
-file_loc = "web_0.csv.gz"
+#file_loc = "web_0.csv.gz"
+
+file_loc = "/home/pranav/Desktop/Research/traces/FIU/casa-110108-112108.1.blkparse"
 
 processor = skeletor()
-processor.test_print()
-processor.open_file(file_loc, trace_type="MSR_Cambridge")
+#processor.test_print()
+#processor.open_file(file_loc, trace_type="MSR_Cambridge")
+
+processor.open_file(file_loc, trace_type="FIU")
 
 # print(processor.read_next_line())
 # print(processor.read_next_line())
@@ -21,4 +25,4 @@ profiler.get_access_matrix("matrix.dat")
 
 #profiler.plot_distribution("offset", "./test_fig.svg")
 
-#profiler.plot_scatter("block", "./test_scatter_0.1_5bin.png", binSize=5, markerSize=5)
+#profiler.plot_scatter("block", "./test_scatter_fiu_0.1_5bin.png", binSize=5, markerSize=5)
