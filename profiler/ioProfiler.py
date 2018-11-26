@@ -270,6 +270,50 @@ class IOProfiler():
         plt.title("time vs {}".format(field))
         plt.savefig(file_name, dpi=dpi)
 
+    def plot_scatter_interval(self, field, file_name, interval, colorField=None, markerSize=1, binSize=0):
+        '''
+            Need to find the index to start and end reading the data for a given time interval 
+            Then just call plot scatter with the start and end index and plot just for that 
+        '''
+
+        start_index, end_index = self.get_interval_index(interval)
+
+        """
+        Saves a scatterplot of the given field.
+        Params:
+            field -- the field that is going to be plotted
+            file_name -- the output file name
+            colorField -- the field that will dictate the color of the points
+            markerSize -- the size of the point
+            binSize -- the size of the bins for time
+        """
+        print("Scatter plot of {}".format(field))
+
+        colors = ["red", "gold", "darkgreen", "navy", "black"]
+
+        color_map = {
+            "read": "r",
+            "write": "b"
+        }
+        color_array = [color_map[x] for x in self.data["io_type"]]
+
+        if (binSize):
+            time = self.bucket_time(binSize)
+        else:
+            time = self.data["access_time"]
+
+        print("The len of time is {}".format(len(time)))
+        print("The len of the data is {}".format(len(self.data[field])))
+
+        plt.scatter(time[interval[0]:interval[1]], self.data[field][interval[0]:interval[1]], color=color_array, s=markerSize, alpha=0.1)
+        plt.xlabel("time")
+        plt.ylabel(field)
+        plt.ylim(0, max(self.data[field]))
+        plt.title("time vs {}".format(field))
+        plt.savefig("{}_{}".format(str(interval[0]), file_name), dpi=1200)
+
+        #plot_scatter(self, field, file_name, colorField, markerSize, binSize)
+
     def plot_scatter(self, field, file_name, colorField=None, markerSize=1, binSize=0):
         """
         Saves a scatterplot of the given field.
@@ -378,6 +422,29 @@ class IOProfiler():
             self.block_data[block].append(index)
         else:
             self.block_data[block] = [index]
+
+
+    def get_interval_index(self, interval):
+        time = self.data["access_time"]
+        start_time = time[0]
+        start_index = -1
+        end_index = -1
+        cur_index = 0
+        start = interval[0]
+        end = interval[1]
+
+        for t in time:
+            diff = (t - start_time)/1000000000 # time in nanosecond 
+            if (diff >= start and start_index == -1):
+                start_index = cur_index
+            elif (diff > end and end_index == -1):
+                end_index = cur_index - 1
+                break
+            cur_index += 1
+
+        return start_index, end_index
+
+
 
 
 

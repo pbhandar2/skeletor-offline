@@ -22,9 +22,12 @@ class gzReader(AbstractReader):
         if (num_skip > 0):
             self.skip_lines(num_skip)
 
+    # when you read a line you need to update the timer to whatever value the time is at right now 
     def get_next_line(self):
         self.num_lines += 1
-        return self.file.readline().decode("utf-8").rstrip()
+        line = self.file.readline().decode("utf-8").rstrip()
+
+        return line
 
     def get_next_line_array(self):
         self.num_lines += 1
