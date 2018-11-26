@@ -13,10 +13,16 @@ class TimeReader():
 
     	self.cur_time = time
 
-    def time_elapsed(self, time):
-    	return self.cur_time - self.start_time
+    def time_elapsed(self):
+        divider = 0
+        if (self.unit == "ns"):
+            divider = 1000000000
+        return (self.cur_time - self.start_time)/divider
 
     def time_diff(self, time1, time2):
-    	return time2 - time1
+        divider = 0
+        if (self.unit == "ns"):
+            divider = 1000000000
+        return (time2 - time1)/divider
 
 

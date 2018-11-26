@@ -1,13 +1,50 @@
 from skeletor import skeletor
 
-#file_loc = "web_0.csv.gz"
+file_name = "casa-110108-112108.1.blkparse"
+file_loc = "/home/pranav/Desktop/Research/traces/FIU/{}".format(file_name)
 
-file_loc = "/home/pranav/Desktop/Research/traces/FIU/casa-110108-112108.1.blkparse"
 
 processor = skeletor()
 processor.open_file(file_loc, "../trace_config.json", trace_type="FIU")
 
-profiler = processor.get_io_profiler()
+for i in range(100000):
+	line = processor.get_next_line_array()
+	rw = line[5]
+	if (rw == "R"):
+		print(line)
+
+#profiler = processor.get_io_profiler()
+#profiler.plot_scatter_interval("block", "{}.png".format(file_name), 1800, binSize=0, markerSize=5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #profiler.metric_calculator()
 
@@ -23,9 +60,9 @@ profiler = processor.get_io_profiler()
 
 # # print(processor.read_next_line())
 # # print(processor.read_next_line())
-for i in range(100):
-    line = processor.get_next_line_array()
-    if (line[5])
+# for i in range(100):
+#     line = processor.get_next_line_array()
+#     print(line)
 
 
 

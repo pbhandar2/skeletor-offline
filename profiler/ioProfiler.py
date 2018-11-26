@@ -276,41 +276,51 @@ class IOProfiler():
             Then just call plot scatter with the start and end index and plot just for that 
         '''
 
-        start_index, end_index = self.get_interval_index(interval)
+        if (self.length == -1):
+            self.metric_calculator()
 
-        """
-        Saves a scatterplot of the given field.
-        Params:
-            field -- the field that is going to be plotted
-            file_name -- the output file name
-            colorField -- the field that will dictate the color of the points
-            markerSize -- the size of the point
-            binSize -- the size of the bins for time
-        """
-        print("Scatter plot of {}".format(field))
+        time_length = self.reader.clock.time_elapsed()
+        num_bins = math.floor(time_length/interval)
 
-        colors = ["red", "gold", "darkgreen", "navy", "black"]
+        for i in range(num_bins):
 
-        color_map = {
-            "read": "r",
-            "write": "b"
-        }
-        color_array = [color_map[x] for x in self.data["io_type"]]
+            start_index, end_index = self.get_interval_index([i*interval, (i+1)*interval])
 
-        if (binSize):
-            time = self.bucket_time(binSize)
-        else:
-            time = self.data["access_time"]
+            """
+            Saves a scatterplot of the given field.
+            Params:
+                field -- the field that is going to be plotted
+                file_name -- the output file name
+                colorField -- the field that will dictate the color of the points
+                markerSize -- the size of the point
+                binSize -- the size of the bins for time
+            """
+            print("Scatter plot of {}".format(field))
 
-        print("The len of time is {}".format(len(time)))
-        print("The len of the data is {}".format(len(self.data[field])))
+            colors = ["red", "gold", "darkgreen", "navy", "black"]
 
-        plt.scatter(time[interval[0]:interval[1]], self.data[field][interval[0]:interval[1]], color=color_array, s=markerSize, alpha=0.1)
-        plt.xlabel("time")
-        plt.ylabel(field)
-        plt.ylim(0, max(self.data[field]))
-        plt.title("time vs {}".format(field))
-        plt.savefig("{}_{}".format(str(interval[0]), file_name), dpi=1200)
+            color_map = {
+                "read": "r",
+                "write": "b"
+            }
+            color_array = [color_map[x] for x in self.data["io_type"]]
+
+            if (binSize):
+                time = self.bucket_time(binSize)
+            else:
+                time = self.data["access_time"]
+
+            print("The len of time is {}".format(len(time)))
+            print("The len of the data is {}".format(len(self.data[field])))
+
+            plt.figure(i)
+            plt.scatter(time[start_index:end_index], self.data[field][start_index:end_index], color=color_array, s=markerSize, alpha=0.1)
+            plt.xlabel("time")
+            plt.ylabel(field)
+            plt.ylim(0, max(self.data[field]))
+            plt.title("time vs {}".format(field))
+            plt.savefig("{}_{}".format(str(start_index), file_name), dpi=1200)
+            plt.close()
 
         #plot_scatter(self, field, file_name, colorField, markerSize, binSize)
 

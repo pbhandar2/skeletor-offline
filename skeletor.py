@@ -13,6 +13,7 @@ import gzip
 import json
 
 from traceReader.gzReader import gzReader
+from traceReader.timeReader import TimeReader
 from traceReader.txtReader import txtReader
 from profiler.ioProfiler import IOProfiler
 
@@ -76,7 +77,8 @@ class skeletor:
             if (trace_type == "MSR-Cambridge"):
                 self.reader = gzReader(file_loc, self.config["delimiter"], self.config["fields"], trace_type, block_size=block_size)
             elif (trace_type == "FIU"):
-                self.reader = txtReader(file_loc, self.config["delimiter"], self.config["fields"], trace_type)
+                clock = TimeReader(self.config["time_unit"], self.config["time_type"], self.config["time_format"])
+                self.reader = txtReader(file_loc, self.config["delimiter"], self.config["fields"], trace_type, clock)
             elif (trace_type == "custom" or trace_type == None):
                 # if file type is not speicified expecting the file format at least
                 if (kwargs["file_format"] == None):

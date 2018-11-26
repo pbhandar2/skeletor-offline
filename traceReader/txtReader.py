@@ -10,7 +10,7 @@ from traceReader.abstractReader import AbstractReader
 
 class txtReader(AbstractReader):
 
-    def __init__(self, file_loc, delimiter, fields, trace_type, num_skip=0, block_size=-1):
+    def __init__(self, file_loc, delimiter, fields, trace_type, clock, num_skip=0, block_size=-1):
         super(txtReader, self).__init__(file_loc)
         self.file = open(file_loc, "r") # the file to be read
         self.num_lines = 0 # the number of lines in the trace file
@@ -18,13 +18,17 @@ class txtReader(AbstractReader):
         self.fields = fields
         self.trace_type = trace_type
         self.block_size = block_size
-
+        self.clock = clock
         if (num_skip > 0):
             self.skip_lines(num_skip)
 
     def get_next_line(self):
         self.num_lines += 1
-        return self.file.readline().rstrip()
+        line = self.file.readline().rstrip()
+        if (line):
+            line_split = line.split(self.delimiter)
+            self.clock.update_time(int(line_split[0]))
+        return line
 
     def get_next_line_array(self):
         self.num_lines += 1

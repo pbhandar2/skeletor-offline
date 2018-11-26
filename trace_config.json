@@ -50,6 +50,7 @@
     "block_size": 512,
     "time_type": "timestamp",
     "time_unit": "ns",
+    "time_format": "",
     "block_type": "number",
     "fields": {
       "time": {
