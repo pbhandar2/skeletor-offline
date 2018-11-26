@@ -317,7 +317,7 @@ class IOProfiler():
             plt.ylabel(field)
             plt.ylim(0, max(self.data[field]))
             plt.title("time vs {}".format(field))
-            plt.savefig("{}_{}".format(str(start_index), file_name), dpi=1200)
+            plt.savefig("{}_{}.png".format(file_name, str(start_index)), dpi=1200)
             plt.close()
 
 
