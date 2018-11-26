@@ -7,14 +7,8 @@ file_loc = "/home/pranav/Desktop/Research/traces/FIU/{}".format(file_name)
 processor = skeletor()
 processor.open_file(file_loc, "../trace_config.json", trace_type="FIU")
 
-for i in range(100000):
-	line = processor.get_next_line_array()
-	rw = line[5]
-	if (rw == "R"):
-		print(line)
-
-#profiler = processor.get_io_profiler()
-#profiler.plot_scatter_interval("block", "{}.png".format(file_name), 1800, binSize=0, markerSize=5)
+profiler = processor.get_io_profiler()
+profiler.plot_scatter_interval("block", "{}.png".format(file_name), 1800, binSize=0, markerSize=5)
 
 
 
@@ -37,7 +31,11 @@ for i in range(100000):
 
 
 
-
+# for i in range(100000):
+# 	line = processor.get_next_line_array()
+# 	rw = line[5]
+# 	if (rw == "R"):
+# 		print(line)
 
 
 

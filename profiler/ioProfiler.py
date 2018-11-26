@@ -88,8 +88,8 @@ class IOProfiler():
         print(self.min_max_data)
         print(self.length)
 
-        for data_type in self.data:
-            print("Info for {} len is {}".format(data_type, len(self.data[data_type])))
+        # for data_type in self.data:
+        #     print("Info for {} len is {}".format(data_type, len(self.data[data_type])))
 
     def get_access_matrix(self, filename):
         """
@@ -271,10 +271,17 @@ class IOProfiler():
         plt.savefig(file_name, dpi=dpi)
 
     def plot_scatter_interval(self, field, file_name, interval, colorField=None, markerSize=1, binSize=0):
-        '''
-            Need to find the index to start and end reading the data for a given time interval 
-            Then just call plot scatter with the start and end index and plot just for that 
-        '''
+        """
+        Saves scatterplots for different intervals
+
+        Params:
+            field -- the field that is going to be plotted
+            file_name -- the output file name
+            interval -- time length for each plot
+            colorField -- the field that will dictate the color of the points
+            markerSize -- the size of the point
+            binSize -- the size of the bins for time
+        """
 
         if (self.length == -1):
             self.metric_calculator()
@@ -286,15 +293,6 @@ class IOProfiler():
 
             start_index, end_index = self.get_interval_index([i*interval, (i+1)*interval])
 
-            """
-            Saves a scatterplot of the given field.
-            Params:
-                field -- the field that is going to be plotted
-                file_name -- the output file name
-                colorField -- the field that will dictate the color of the points
-                markerSize -- the size of the point
-                binSize -- the size of the bins for time
-            """
             print("Scatter plot of {}".format(field))
 
             colors = ["red", "gold", "darkgreen", "navy", "black"]
@@ -322,7 +320,6 @@ class IOProfiler():
             plt.savefig("{}_{}".format(str(start_index), file_name), dpi=1200)
             plt.close()
 
-        #plot_scatter(self, field, file_name, colorField, markerSize, binSize)
 
     def plot_scatter(self, field, file_name, colorField=None, markerSize=1, binSize=0):
         """
