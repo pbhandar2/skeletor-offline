@@ -19,6 +19,7 @@ class txtReader(AbstractReader):
         self.trace_type = trace_type
         self.block_size = block_size
         self.clock = clock
+        self.file_loc = file_loc
         if (num_skip > 0):
             self.skip_lines(num_skip)
 

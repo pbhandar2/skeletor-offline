@@ -50,12 +50,12 @@ class IOProfiler():
 
     def bucket_time(self, bucket_size):
         """
-        Returns the time array with buckets of a given size 
+        Returns the time array with buckets of a given size
         """
         if (self.length == -1):
             metric_calculator()
 
-        bucket_diff = 1000000000 * bucket_size # readings are in nanosecond 
+        bucket_diff = 1000000000 * bucket_size # readings are in nanosecond
         start = self.data["access_time"][0]
         bucket_array = [start]
         for t in self.data["access_time"][1:]:
@@ -93,8 +93,8 @@ class IOProfiler():
 
     def get_access_matrix(self, filename):
         """
-        Get the access pattern in matrix form. Each row correspond to an LBNs access pattern 
-        over time. 
+        Get the access pattern in matrix form. Each row correspond to an LBNs access pattern
+        over time.
         Params:
             filename -- the filename to use to save the matrix data
         """
@@ -130,7 +130,7 @@ class IOProfiler():
             data_string="{}".format(1)
         else:
             data_string="{}".format(0)
-        
+
 
         for i in range(1, self.reader.num_lines):
             if (i in v):
@@ -165,9 +165,9 @@ class IOProfiler():
 
     def get_access_matrix_row(self, index):
         """
-        Based on at which indexes that the block is accessed, create the matrix rows. 
+        Based on at which indexes that the block is accessed, create the matrix rows.
         Params:
-            index -- array of indexes where a block was accessed. 
+            index -- array of indexes where a block was accessed.
         """
         row = [0] * len(self.data["access_time"])
         for i in index:
@@ -176,10 +176,10 @@ class IOProfiler():
 
     def update_data(self, line_data):
         """
-        Once the data is extracted from a line. This function is used to update the data for 
-        each data extracted from the line. 
+        Once the data is extracted from a line. This function is used to update the data for
+        each data extracted from the line.
         Params:
-            line -- The data extracted from a line. 
+            line -- The data extracted from a line.
         """
         #print("The line data is {}".format(line_data))
         for field in line_data:
@@ -211,10 +211,10 @@ class IOProfiler():
 
     def get_line_data(self, line):
         """
-        Uses the field dict to extract all the information that it can from a given 
-        line. 
+        Uses the field dict to extract all the information that it can from a given
+        line.
         Params:
-            line -- the line in string form. 
+            line -- the line in string form.
         """
         line_data = {}
         for field in self.reader.fields:
@@ -228,11 +228,11 @@ class IOProfiler():
 
     def update_field(self, field, field_value, update_type):
         """
-        This functions updates a given field of the data dictionary.  
+        This functions updates a given field of the data dictionary.
         Params:
             field -- the field to be updated.
             field_value -- tthe value of the field
-            update_type -- what kind of update to perform, append, add, subtract? 
+            update_type -- what kind of update to perform, append, add, subtract?
         """
         # if the field is in the data struct
         if field in self.data:
@@ -250,14 +250,14 @@ class IOProfiler():
             else:
                 raise ValueError("The value provided as update_type does not exist.")
 
-        # if it is a numeric or float value extract the min and max for it 
+        # if it is a numeric or float value extract the min and max for it
         if (isinstance(field_value, int) or isinstance(field_value, float)):
             min_max_array = self.min_max_data
             if field in min_max_array:
                 self.min_max_data[field] = [min(field_value, min_max_array[field][0]), max(field_value, min_max_array[field][1])]
             else:
                 self.min_max_data[field] = [field_value, field_value]
-            
+
 
     def plot_distribution(self, field, file_name, colorField=None, dpi=1200):
         """
@@ -320,6 +320,70 @@ class IOProfiler():
             plt.savefig("{}_{}.png".format(file_name, str(i*interval)), dpi=1200)
             plt.close()
 
+    def plot_scatter_interval_vanila(self, field, file_name, interval, colorField=None, markerSize=1, binSize=0):
+        """
+        Saves scatterplots for different intervals
+
+        Params:
+            field -- the field that is going to be plotted
+            file_name -- the output file name
+            interval -- time length for each plot
+            colorField -- the field that will dictate the color of the points
+            markerSize -- the size of the point
+            binSize -- the size of the bins for time
+        """
+
+        if (self.length == -1):
+            self.metric_calculator()
+
+        time_length = self.reader.clock.time_elapsed()
+        num_bins = math.floor(time_length/interval)
+
+        for i in range(num_bins):
+
+            start_index, end_index = self.get_interval_index([i*interval, (i+1)*interval])
+
+            print("file: {} start: {} end: {} length of time: {}".format(self.reader.file_loc, start_index, end_index, len(self.data["access_time"])))
+
+            #print("Scatter plot of {}".format(field))
+
+            colors = ["red", "gold", "darkgreen", "navy", "black"]
+
+            color_map = {
+                "read": "r",
+                "write": "b"
+            }
+            color_array = [color_map[x] for x in self.data["io_type"]]
+
+            if (binSize):
+                time = self.bucket_time(binSize)
+            else:
+                time = self.data["access_time"]
+
+            #print("The len of time is {}".format(len(time)))
+            #print("The len of the data is {}".format(len(self.data[field])))
+            #print("Min time {} and Max time {} and last time is {}".format(min(time[start_index:end_index]), max(time[start_index:end_index]), time[end_index]))
+
+            # plt.figure(i)
+            # plt.scatter(time[start_index:end_index], self.data[field][start_index:end_index], color=color_array, s=markerSize, alpha=0.1)
+            # plt.ylim(min(self.data[field]), max(self.data[field]))
+            # plt.xlim(min(time[start_index:end_index]), max(time[start_index:end_index]))
+            #plt.xlim(left=0)
+            #plt.axis('off')
+            #plt.savefig("{}_{}.png".format(file_name, str(i*interval)))
+            if (len(time[start_index:end_index])):
+                fig = plt.figure(figsize=[6,6])
+                ax = fig.add_subplot(111)
+                man_pad = 0
+                ax.scatter(time[start_index:end_index], self.data[field][start_index:end_index], color=color_array, s=markerSize, alpha=0.1)
+                ax.set_ylim(min(self.data[field]) - man_pad, max(self.data[field]) + man_pad)
+                ax.set_xlim(min(time[start_index:end_index]) - man_pad, max(time[start_index:end_index]) + man_pad)
+                ax.axes.get_xaxis().set_visible(False)
+                ax.axes.get_yaxis().set_visible(False)
+                ax.set_frame_on(False)
+                plt.savefig("{}_{}.png".format(file_name, str(i*interval)), bbox_inches='tight',pad_inches=0.05)
+
+                plt.close()
 
     def plot_scatter(self, field, file_name, colorField=None, markerSize=1, binSize=0):
         """
@@ -359,10 +423,10 @@ class IOProfiler():
     def match_with_value(self, match_value, values):
         """
         Matches the value obtained from the trace with a predefined or user defined notation.
-        E.g. 
-            The library requires type of I/O to be under "io_type" in the 
+        E.g.
+            The library requires type of I/O to be under "io_type" in the
             config dict and the read and write instances to be represented as "read" and "write"
-            but some traces might have it as "R" and "W". The entry in the fields dictionary 
+            but some traces might have it as "R" and "W". The entry in the fields dictionary
             would be:
             {
                 ...,
@@ -377,7 +441,7 @@ class IOProfiler():
                         }
                     }
                 }
-            } 
+            }
 
         Params:
             match_value -- value extracted from the trace for this field
@@ -392,10 +456,10 @@ class IOProfiler():
     def process_size(self, line_data):
         """
         Do proessing based on the value of the size in line data. If the access is of size 1024
-        and the block size is 512 then it means that the current and the next block is accessed 
-        and both need to be accounted for. 
+        and the block size is 512 then it means that the current and the next block is accessed
+        and both need to be accounted for.
         Params:
-            line_data -- all relevant data for the given line. 
+            line_data -- all relevant data for the given line.
         """
 
         size = line_data["size"]
@@ -418,10 +482,10 @@ class IOProfiler():
     def process_block(self, block, index):
         """
         Update information on the blocks. A set maintains the unique blocks and blocks_data maintains
-        the access pattern of each block. 
+        the access pattern of each block.
         Params:
-            block -- the block number. 
-            index -- this represents the current time 
+            block -- the block number.
+            index -- this represents the current time
         """
         # print("Processing the block {}".format(block))
         self.block_list.add(block)
@@ -441,7 +505,7 @@ class IOProfiler():
         end = interval[1]
 
         for t in time:
-            diff = (t - start_time)/1000000000 # time in nanosecond 
+            diff = (t - start_time)/1000000000 # time in nanosecond
             if (diff >= start and start_index == -1):
                 start_index = cur_index
             elif (diff > end and end_index == -1):
@@ -450,12 +514,3 @@ class IOProfiler():
             cur_index += 1
 
         return start_index, end_index
-
-
-
-
-
-
-
-
-    
