@@ -1,6 +1,6 @@
 from skeletor import skeletor
-import sys 
-import os 
+import sys
+import os
 
 trace_folder = sys.argv[1]
 output_path = sys.argv[2]
@@ -14,13 +14,8 @@ for file_name in trace_file_names:
 		processor = skeletor()
 		processor.open_file(trace_path, "../trace_config.json", trace_type="FIU")
 		profiler = processor.get_io_profiler()
-		profiler.plot_scatter_interval_vanila("block", out_path, 1800, binSize=0, markerSize=5)
-
-
-
-
-
-
-
-
-
+		
+		try:
+			profiler.plot_scatter_interval_vanila("block", out_path, 1800, binSize=0, markerSize=5)
+		except:
+			print("Error on file {}".format(file_name))
