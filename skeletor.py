@@ -16,12 +16,13 @@ from traceReader.gzReader import gzReader
 from traceReader.timeReader import TimeReader
 from traceReader.txtReader import txtReader
 from profiler.ioProfiler import IOProfiler
+from lib.general import check_config
 
-class skeletor:
+class Skeletor:
 
-    def __init__(self):
+    def __init__(self, config_file_location, trace_type):
         self.profiler = None
-        self.config = None
+        self.config = check_config(config_file_location, trace_type)
 
     def open_file(self, file_loc, config_file, **kwargs):
         """
