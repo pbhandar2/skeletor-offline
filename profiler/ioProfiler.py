@@ -1,7 +1,12 @@
 # coding=utf-8
 
 """
-The I/O profiler that gives the users the I/O metrics.
+The I/O profiler that gives the users the I/O metrics. The metrics that it calculates are: 
+
+1. Read/Write Rate 
+2. Read/Write Count 
+3. Variation in Read/Write Value 
+
 Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 """
 
@@ -52,6 +57,7 @@ class IOProfiler():
         """
         Returns the time array with buckets of a given size
         """
+
         if (self.length == -1):
             metric_calculator()
 
@@ -78,15 +84,14 @@ class IOProfiler():
         line = self.reader.get_next_line()
         count= 0;
         while(line):
-            line_data = self.get_line_data(line)
-            #print("Got line data for time {}".format(line_data["time"]))
-            self.update_data(line_data)
+            # line_data = self.get_line_data(line)
+            # #print("Got line data for time {}".format(line_data["time"]))
+            # self.update_data(line_data)
             line = self.reader.get_next_line()
 
-
-        self.length = self.data["time"][-1] - self.data["time"][0]
-        print(self.min_max_data)
-        print(self.length)
+        # self.length = self.data["time"][-1] - self.data["time"][0]
+        # print(self.min_max_data)
+        # print(self.length)
 
         # for data_type in self.data:
         #     print("Info for {} len is {}".format(data_type, len(self.data[data_type])))
@@ -185,9 +190,12 @@ class IOProfiler():
         for field in line_data:
             #print("Updating field: {}".format(field))
             field_object = self.reader.fields[field]
+
+
             if (field == "io_type"):
                 field_value = self.match_with_value(line_data[field], field_object["values"])
                 self.update_field(field, field_value, "append")
+                self.process_io_type(line_data[field], field_object["values"])
             elif (field == "time"):
                 field_value = line_data[field]
                 self.update_field(field, field_value, "append")
@@ -234,7 +242,8 @@ class IOProfiler():
             field_value -- tthe value of the field
             update_type -- what kind of update to perform, append, add, subtract?
         """
-        # if the field is in the data struct
+
+        # if the field is in the data struct then I can just append otherwise I need to assign it first 
         if field in self.data:
             if (update_type == "append"):
                 self.data[field].append(field_value)
@@ -514,3 +523,20 @@ class IOProfiler():
             cur_index += 1
 
         return start_index, end_index
+
+
+    def process_io_type(self, io_data, io_config):
+        """
+        Update all the data being constructed regarding read/write 
+        Params:
+            block -- the block number.
+            index -- this represents the current time
+        """
+        # if io_config["read"] == io_data:
+        #     # update all the read stuff
+        # else:
+        #     # update all the write stuff
+
+        # import sys 
+        # sys.exit()
+

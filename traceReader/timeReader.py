@@ -26,3 +26,4 @@ class TimeReader():
         return (time2 - time1)/divider
 
 
+

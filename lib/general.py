@@ -2,7 +2,12 @@ import json
 
 def check_config(json_file_location, trace_type):
 
-	json_file_handle = open(json_file_location, 'r')
+	try:
+		json_file_handle = open(json_file_location, 'r')
+	except IOError:
+		print ("Could not read file: {}. Make sure the config file exists.".format(config_file))
+		exit()
+
 	config_json_array = json.load(json_file_handle)
 
 	assert type(config_json_array) == list

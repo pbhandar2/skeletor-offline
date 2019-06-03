@@ -5,12 +5,16 @@
     "delimiter": ",",
     "format": "gz",
     "block_size": 512,
-    "time_type": "timestamp",
+    "clock_config": {
+      "type": "windows",
+      "unit": "100nano",
+      "format": "n/a"
+    },
     "block_type": "offset",
     "fields": {
       "time": {
         "index": 0,
-        "type": "float"
+        "type": "integer"
       },
       "hostname": {
         "index": 1,
