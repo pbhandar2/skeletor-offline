@@ -28,7 +28,7 @@ class gzReader(AbstractReader):
 
         self.data = {}
         for key in self.fields:
-            self.data[key] = np.array([])
+            self.data[key] = []
 
         if (self.num_skip > 0):
             self.skip_lines(self.num_skip)
@@ -39,12 +39,14 @@ class gzReader(AbstractReader):
 
         if len(self.cur_line):
             self.cur_fields = process_line(self.cur_line.split(self.delimiter), self.fields)
-
-        for key in self.cur_fields:
-            if key == "time":
-                self.data[key] = np.append(self.data[key], self.clock.get_time(self.cur_fields[key]))
-            else:
-                self.data[key] = np.append(self.data[key], self.cur_fields[key])
+            for key in self.cur_fields:
+                if key == "time":
+                    self.data[key].append(self.clock.get_time(self.cur_fields[key]))
+                else:
+                    self.data[key].append(self.cur_fields[key])
+        else:
+            self.cur_fields = None
+            self.file.close()
 
         return self.cur_line
 

@@ -18,6 +18,7 @@ from traceReader.timeReader import TimeReader
 from traceReader.txtReader import txtReader
 from traceReader.clock import clock
 from profiler.ioProfiler import IOProfiler
+from profiler.metricExtractor import MetricExtractor
 from lib.general import check_config
 
 DEFAULT_BLOCK_SIZE = 512
@@ -49,20 +50,16 @@ class Skeletor:
         clock_obj = None
         if "clock_config" in self.config:
             clock_type = self.config["clock_config"]["type"]
-
             if clock_type == "windows":
                 self.config["clock"] = clock(clock_type)
-
         else:
             unit = "nano"
             _type = "relative"
-
+            logging.warning("Clock not included in config. Using default clock.")
 
 
         if (trace_type == "MSR-Cambridge"):
             self.reader = gzReader(file_loc, self.config, trace_type)
-
-
 
 
         # The config file can contain multiple configuration the trace type variable denotes which
@@ -109,6 +106,21 @@ class Skeletor:
         if (self.reader):
             if (self.profiler == None):
                 self.profiler = IOProfiler(self.reader)
+        else:
+            raise Exception("You need to open a file using open_file in order to get data to plot.")
+
+        return self.profiler
+
+    def get_metric_extractor(self):
+        """
+        Returns the next line of the trace file.
+        """
+        
+        # print("THIS IS THE I/O PROFILER.")
+
+        if (self.reader):
+            if (self.profiler == None):
+                self.profiler = MetricExtractor(self.reader)
         else:
             raise Exception("You need to open a file using open_file in order to get data to plot.")
 

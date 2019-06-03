@@ -1,18 +1,23 @@
 import sys
-from guppy import hpy
-h = hpy()
 
 sys.path.append('../')
 
 from skeletor import Skeletor
-processor = Skeletor()
-processor.open_file("web_0.csv.gz", "../trace_config.json", "MSR-Cambridge")
-profiler = processor.get_io_profiler()
-profiler.metric_calculator()
 
-print(len(profiler.reader.data["io_type"]))
-print(len(profiler.reader.data["time"]))
-print(profiler.reader.data["time"][1:10])
+@profile
+def my_func():
+	processor = Skeletor()
+	processor.open_file("web_0.csv.gz", "../trace_config.json", "MSR-Cambridge")
+	profiler = processor.get_metric_extractor()
+	profiler.extract_metric()
+
+	print(len(profiler.reader.data["io_type"]))
+	print(len(profiler.reader.data["time"]))
+	print(profiler.reader.data["io_type"][1:10])
+	print(profiler.reader.clock.time_elasped)
+
+	print(profiler.metrics)
 
 
-print h.heap()
+if __name__ == '__main__':
+    my_func()
