@@ -1,5 +1,5 @@
 *.pyc
 __pycache__
 *.svg
-*.gz
+test/web_0.csv.gz
 *.dat
