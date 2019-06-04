@@ -24,3 +24,5 @@ self.metrics = {
 	"max_write_size": None
 }
 
+To test, run the tester.py in the test folder. 
+
