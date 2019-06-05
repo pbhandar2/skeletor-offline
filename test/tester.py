@@ -20,5 +20,8 @@ def my_func():
 	print(json.dumps(profiler.metrics, indent=4, sort_keys=True))
 
 
+	print(len(profiler.window_metrics_array))
+
+
 if __name__ == '__main__':
     my_func()
