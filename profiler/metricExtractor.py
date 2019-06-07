@@ -14,6 +14,7 @@ matplotlib.use("agg")
 
 import matplotlib.pyplot as plt
 import numpy as np 
+from statsmodels.tsa.stattools import acf
 
 DEF_WINDOW_SIZE=300
 
@@ -54,7 +55,8 @@ class MetricExtractor():
 			"min_write_size": None,
 			"max_read_size": None,
 			"max_write_size": None,
-			"fano": {}
+			"fano": {},
+			"autocorrelation": {}
 		}
 
 		cur_window_metrics = {
@@ -207,10 +209,17 @@ class MetricExtractor():
 		self.get_fano_factor("total_read_size")
 		self.get_fano_factor("total_write_size")
 
+		self.get_autocorrelation("read_count")
+		self.get_autocorrelation("write_count")
+		self.get_autocorrelation("total_io")
+		self.get_autocorrelation("total_io_size")
+		self.get_autocorrelation("total_read_size")
+		self.get_autocorrelation("total_write_size")
+
 
 	def get_fano_factor(self, attribute):
 
-		#print("Fano factor of {}".format(attribute))
+		# print("Fano factor of {}".format(attribute))
 
 		attribute_array = np.zeros(len(self.window_metrics_array))
 		for i, window_metric in enumerate(self.window_metrics_array):
@@ -224,6 +233,20 @@ class MetricExtractor():
 		cur_fano[attribute] = fano
 		self.metrics["fano"] = cur_fano
 
+	def get_autocorrelation(self, attribute):
+
+		print("Autocorrelation of {}".format(attribute))
+
+		attribute_array = np.zeros(len(self.window_metrics_array))
+		for i, window_metric in enumerate(self.window_metrics_array):
+			attribute_array[i] = window_metric[attribute]
+
+		autocorr = acf(attribute_array)
+		cur_autocorr = self.metrics["autocorrelation"]
+		cur_autocorr[attribute] = autocorr.tolist()
+		self.metrics["autocorrelation"] = cur_autocorr
+
+		print(self.metrics)
 
 
 
