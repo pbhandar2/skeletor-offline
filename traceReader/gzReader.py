@@ -25,6 +25,7 @@ class gzReader(AbstractReader):
         self.cur_fields = None
         self.num_skip = config["num_skip"] if "num_skip" in config else 0
         self.clock = config["clock"]
+        self.file_name = file_loc.split('/')[-1]
 
         self.data = {}
         for key in self.fields:

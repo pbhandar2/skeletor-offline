@@ -16,14 +16,10 @@ import matplotlib.pyplot as plt
 import numpy as np 
 from statsmodels.tsa.stattools import acf
 from scipy.stats import describe
+from const import *
+from copy import copy
+from collections import Counter 
 
-DEF_WINDOW_SIZE=300
-
-
-'''
-	Fix the following parameters:
-		1. 
-'''
 
 class MetricExtractor():
 
@@ -43,50 +39,11 @@ class MetricExtractor():
 
 		window_metrics_array = []
 		window_start_time = None
+		prev_access = 0
 
-		metrics = {
-			"read_count": 0,
-			"write_count": 0,
-			"total_io": 0,
-			"read_write_ratio": None,
-			"read_rate": None,
-			"write_rate": None,
-			"io_rate": None,
-			"total_io_size": 0,
-			"total_read_size": 0,
-			"total_write_size": 0,
-			"average_read_size": None,
-			"average_write_size": None,
-			"average_io_size": None,
-			"min_read_size": None,
-			"min_write_size": None,
-			"max_read_size": None,
-			"max_write_size": None,
-			"fano": {},
-			"autocorrelation": {},
-			"moments": {}
-		}
+		metrics = copy(METRICS)
 
-		cur_window_metrics = {
-			"read_count": 0,
-			"write_count": 0,
-			"total_io": 0,
-			"read_write_ratio": None,
-			"read_rate": None,
-			"write_rate": None,
-			"io_rate": None,
-			"total_io_size": 0,
-			"total_read_size": 0,
-			"total_write_size": 0,
-			"average_read_size": None,
-			"average_write_size": None,
-			"average_io_size": None,
-			"min_read_size": None,
-			"min_write_size": None,
-			"max_read_size": None,
-			"max_write_size": None,
-			"fano": {}
-		} 
+		cur_window_metrics = copy(METRICS)
 
 		cur_data = self.reader.get_next_line_data()
 
@@ -97,27 +54,21 @@ class MetricExtractor():
 			elif (self.reader.clock.cur_time - window_start_time).total_seconds() >= self.window:
 				#print("Start time {} and end time {}".format(window_start_time, self.reader.clock.cur_time))
 				window_metrics_array.append(cur_window_metrics)
-				cur_window_metrics = {
-					"read_count": 0,
-					"write_count": 0,
-					"total_io": 0,
-					"read_write_ratio": None,
-					"read_rate": None,
-					"write_rate": None,
-					"io_rate": None,
-					"total_io_size": 0,
-					"total_read_size": 0,
-					"total_write_size": 0,
-					"average_read_size": None,
-					"average_write_size": None,
-					"average_io_size": None,
-					"min_read_size": None,
-					"min_write_size": None,
-					"max_read_size": None,
-					"max_write_size": None,
-					"fano": None
-				} 
+				cur_window_metrics = copy(METRICS)
 				window_start_time = self.reader.clock.cur_time
+				window_prev_access = -self.reader.block_size
+
+			if cur_data["block"] - prev_access == self.reader.block_size:
+				metrics["sequential"] += 1
+				cur_window_metrics["sequential"] += 1
+			else:
+				metrics["random"] += 1
+				cur_window_metrics["random"] += 1
+
+			metrics["sequential"] += int(cur_data["size"]/self.reader.block_size)
+			cur_window_metrics["sequential"] += int(cur_data["size"]/self.reader.block_size)
+
+			prev_access = cur_data["block"] + cur_data["size"]
 
 			if cur_data["io_type"] == 'r':
 				metrics["read_count"] += 1
@@ -277,6 +228,32 @@ class MetricExtractor():
 		moment_obj["kurtosis"] = stats.kurtosis
 
 		self.metrics["moments"][attribute] = moment_obj
+
+
+	def get_access_distribution(self):
+		counter = Counter(self.reader.data["block"])
+		# print("get_access_distribution")
+		self.metrics["access_distribution"] = counter
+		return counter
+
+	def plot_access_distribution(self, figname=DEF_HISTOGRAM_FIG_NAME, limit=DEF_ACCESS_PLOT_LIMIT, width=DEF_HISTOGRAM_WIDTH):
+
+		if self.metrics["access_distribution"] == None:
+			self.get_access_distribution()
+
+		count_filtered = self.metrics["access_distribution"].most_common(limit)
+		labels, values = zip(*count_filtered)
+		indexes = np.arange(len(labels))
+		plt.bar(indexes, values, width)
+		#plt.xticks(indexes + width * 0.5, labels, rotation='vertical')
+		plt.title("Access Distribution of first {} addresses from file {}".format(limit, self.reader.file_name))
+		plt.xticks([], [])
+		plt.savefig(figname)
+
+
+
+
+			
 
 
 
