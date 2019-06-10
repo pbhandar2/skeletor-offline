@@ -15,8 +15,15 @@ matplotlib.use("agg")
 import matplotlib.pyplot as plt
 import numpy as np 
 from statsmodels.tsa.stattools import acf
+from scipy.stats import describe
 
 DEF_WINDOW_SIZE=300
+
+
+'''
+	Fix the following parameters:
+		1. 
+'''
 
 class MetricExtractor():
 
@@ -56,7 +63,8 @@ class MetricExtractor():
 			"max_read_size": None,
 			"max_write_size": None,
 			"fano": {},
-			"autocorrelation": {}
+			"autocorrelation": {},
+			"moments": {}
 		}
 
 		cur_window_metrics = {
@@ -216,6 +224,13 @@ class MetricExtractor():
 		self.get_autocorrelation("total_read_size")
 		self.get_autocorrelation("total_write_size")
 
+		self.get_moments("read_count")
+		self.get_moments("write_count")
+		self.get_moments("total_io")
+		self.get_moments("total_io_size")
+		self.get_moments("total_read_size")
+		self.get_moments("total_write_size")
+
 
 	def get_fano_factor(self, attribute):
 
@@ -235,7 +250,7 @@ class MetricExtractor():
 
 	def get_autocorrelation(self, attribute):
 
-		print("Autocorrelation of {}".format(attribute))
+		# print("Autocorrelation of {}".format(attribute))
 
 		attribute_array = np.zeros(len(self.window_metrics_array))
 		for i, window_metric in enumerate(self.window_metrics_array):
@@ -246,8 +261,22 @@ class MetricExtractor():
 		cur_autocorr[attribute] = autocorr.tolist()
 		self.metrics["autocorrelation"] = cur_autocorr
 
-		print(self.metrics)
 
+	def get_moments(self, attribute):
+
+		# print("Moments of {}".format(attribute))
+		attribute_array = np.zeros(len(self.window_metrics_array))
+		for i, window_metric in enumerate(self.window_metrics_array):
+			attribute_array[i] = window_metric[attribute]
+
+		stats = describe(attribute_array)
+
+		moment_obj = {}
+		moment_obj["variance"] = stats.variance
+		moment_obj["skewness"] = stats.skewness
+		moment_obj["kurtosis"] = stats.kurtosis
+
+		self.metrics["moments"][attribute] = moment_obj
 
 
 
