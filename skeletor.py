@@ -145,5 +145,5 @@ class Skeletor:
         else:
             raise Exception("You need to open a file using open_file in order to get data to plot.")
 
-    def test_print(self):
-        print("TESTING THE CLASS")
+    def __del__(self):
+        print("Destroyed skeletor object!")

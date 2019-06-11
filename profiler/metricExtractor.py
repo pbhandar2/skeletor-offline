@@ -251,6 +251,10 @@ class MetricExtractor():
 		plt.savefig(figname)
 
 
+	def __del__(self):
+		print("Destroyed MetricExtractor object!")
+
+
 
 
 			
