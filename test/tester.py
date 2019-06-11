@@ -31,6 +31,7 @@ def my_func():
 
 	with open('personal.json', 'w') as json_file:  
 	    json.dump(profiler.metrics, json_file, indent=4)
+	    json_file.close()
 
 	# reuse_distance_counter = profiler.get_reuse_distance()
 

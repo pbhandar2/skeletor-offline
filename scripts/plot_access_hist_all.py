@@ -29,6 +29,12 @@ for file_name in file_list:
 		profiler.plot_access_distribution()
 		profiler.plot_reuse_distance_distribution()
 
+		json_file_name = "metric_{}.json".format(file_name)
+
+		with open(json_file_name, 'w+') as json_file:  
+		    json.dump(profiler.metrics, json_file, indent=4)
+		    json_file.close()
+
 		del processor
 
 		print("done processing file {}".format(file_location))
