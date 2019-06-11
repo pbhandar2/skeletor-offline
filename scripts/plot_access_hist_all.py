@@ -26,8 +26,8 @@ for file_name in file_list:
 		profiler = processor.get_metric_extractor()
 		profiler.extract_metric()
 
-		profiler.get_access_distribution()
 		profiler.plot_access_distribution()
+		profiler.plot_reuse_distance_distribution()
 
 		del processor
 

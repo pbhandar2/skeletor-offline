@@ -22,8 +22,20 @@ def my_func():
 	# print(json.dumps(profiler.metrics, indent=4, sort_keys=True))
 	# print(len(profiler.window_metrics_array))
 
-	profiler.get_access_distribution()
+	# profiler.get_access_distribution()
 	profiler.plot_access_distribution()
+
+	#print(profiler.metrics["reuse_distance_distribution"])
+
+	profiler.plot_reuse_distance_distribution()
+
+	with open('personal.json', 'w') as json_file:  
+	    json.dump(profiler.metrics, json_file, indent=4)
+
+	# reuse_distance_counter = profiler.get_reuse_distance()
+
+	# print(len(reuse_distance_counter.keys()))
+
 	
 
 

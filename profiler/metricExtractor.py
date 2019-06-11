@@ -32,6 +32,12 @@ class MetricExtractor():
 		self.metrics = None
 		self.window = window_size
 		self.window_metrics_array = []
+		self.reuse_distance_distribution = None
+		self.reuse_distance_counter = None
+		self.access_distribution = None
+		self.reuse_distance_dict = {}
+		self.blocks_accessed = []
+
 
 	def extract_metric(self, start=-1, end=-1, window_size=DEF_WINDOW_SIZE):
 
@@ -40,6 +46,11 @@ class MetricExtractor():
 		window_metrics_array = []
 		window_start_time = None
 		prev_access = 0
+		access_number = 0
+		access_distribution = Counter()
+		reuse_distance_dict = {}
+		reuse_distance_counter = Counter()
+		prev_access_dict = {}
 
 		metrics = copy(METRICS)
 
@@ -56,7 +67,7 @@ class MetricExtractor():
 				window_metrics_array.append(cur_window_metrics)
 				cur_window_metrics = copy(METRICS)
 				window_start_time = self.reader.clock.cur_time
-				window_prev_access = -self.reader.block_size
+				window_prev_access = 0
 
 			if cur_data["block"] - prev_access == self.reader.block_size:
 				metrics["sequential"] += 1
@@ -67,6 +78,25 @@ class MetricExtractor():
 
 			metrics["sequential"] += int(cur_data["size"]/self.reader.block_size)
 			cur_window_metrics["sequential"] += int(cur_data["size"]/self.reader.block_size)
+
+			for i in range(int(cur_data["size"]/self.reader.block_size)):
+				# print("updating {}".format(cur_data["block"] + i*self.reader.block_size))
+
+				block_address = cur_data["block"] + i*self.reader.block_size
+				access_number += 1
+
+				self.blocks_accessed.append(block_address)
+				access_distribution[block_address] += 1
+
+				if block_address not in reuse_distance_dict:
+					reuse_distance_dict[block_address] = [-1]
+					reuse_distance_counter[-1] += 1
+				else:
+					reuse_distance = access_number - prev_access_dict[block_address] - 1
+					reuse_distance_dict[block_address].append(reuse_distance)
+					reuse_distance_counter[reuse_distance] += 1
+
+				prev_access_dict[block_address] = access_number
 
 			prev_access = cur_data["block"] + cur_data["size"]
 
@@ -160,6 +190,12 @@ class MetricExtractor():
 
 		self.metrics = metrics
 		self.window_metrics_array = window_metrics_array
+		self.access_distribution = access_distribution
+		self.reuse_distance_counter = reuse_distance_counter
+		self.reuse_distance_distribution = sorted(reuse_distance_counter.items())
+		self.reuse_distance_dict = reuse_distance_dict
+		self.metrics["top_10_reuse_distance"] = reuse_distance_counter.most_common(10)
+		self.metrics["top_10_accessed_block"] = access_distribution.most_common(10)
 
 		self.get_fano_factor("read_count")
 		self.get_fano_factor("write_count")
@@ -230,18 +266,12 @@ class MetricExtractor():
 		self.metrics["moments"][attribute] = moment_obj
 
 
-	def get_access_distribution(self):
-		counter = Counter(self.reader.data["block"])
-		# print("get_access_distribution")
-		self.metrics["access_distribution"] = counter
-		return counter
-
 	def plot_access_distribution(self, figname=DEF_HISTOGRAM_FIG_NAME, limit=DEF_ACCESS_PLOT_LIMIT, width=DEF_HISTOGRAM_WIDTH):
 
-		if self.metrics["access_distribution"] == None:
-			self.get_access_distribution()
+		if self.access_distribution == None:
+			self.extract_metric()
 
-		count_filtered = self.metrics["access_distribution"].most_common(limit)
+		count_filtered = self.access_distribution.most_common(limit)
 		labels, values = zip(*count_filtered)
 		indexes = np.arange(len(labels))
 		plt.bar(indexes, values, width)
@@ -253,26 +283,38 @@ class MetricExtractor():
 			figname = "{}_{}.png".format(DEF_HISTOGRAM_FIG_NAME, self.reader.file_name)
 
 		plt.savefig(figname)
+		plt.close()
 
-	def get_reuse_distance(self):
+	def plot_reuse_distance_distribution(self, figname=DEF_REUSE_HISTOGRAM_FIG_NAME, width=DEF_REUSE_HISTOGRAM_WIDTH, limit=DEF_REUSE_HISTOGRAM_PLOT_LIMIT):
 
-		reuse_distance_dict = {}
-		reuse_distance_counter = Counter()
-
-		for access_number, block_address in enumerate(self.reader.data["block"]):
-
-			if block_address not in reuse_distance_dict:
-				reuse_distance_dict[block_address] = [-1]
-				reuse_distance_counter[-1] += 1
-			else:
-				prev_block_access = reuse_distance_dict[block_address][-1]
-				reuse_distance = access_number - prev_block_access - 1
-
-				reuse_distance_dict[block_address].append(access_number)
+		plt.figure(figsize=(80,20))
+		plt.yticks(fontsize=80)
 
 
+		if self.reuse_distance_distribution == None:
+			self.extract_metric()
 
+		count_array = self.reuse_distance_distribution
 
+		labels = []
+		values = []
+
+		for i in range(limit):
+			labels.append(i)
+			values.append(self.reuse_distance_counter[i])
+
+		indexes = np.arange(len(labels))
+		plt.bar(indexes, values, width)
+
+		#plt.xticks(labels, labels, rotation='vertical')
+		plt.title("Reuse Distance Distribution upto {} for file {}".format(limit, self.reader.file_name), fontsize=80)
+		plt.xticks([], [])
+
+		if figname == DEF_REUSE_HISTOGRAM_FIG_NAME:
+			figname = "{}_{}.png".format(DEF_REUSE_HISTOGRAM_FIG_NAME, self.reader.file_name)
+
+		plt.savefig(figname)
+		plt.close()
 
 	def __del__(self):
 		print("Destroyed MetricExtractor object!")

@@ -22,8 +22,14 @@ METRICS = {
 	"fano": {},
 	"autocorrelation": {},
 	"moments": {},
-	"access_distribution": None
+	"num_blocks_accessed": 0,
+	"top_10_reuse_distance": None,
+	"top_10_accessed_block": None
 }
-DEF_ACCESS_PLOT_LIMIT=200
+DEF_ACCESS_PLOT_LIMIT=500
 DEF_HISTOGRAM_WIDTH=1
 DEF_HISTOGRAM_FIG_NAME="access_hist.png"
+
+DEF_REUSE_HISTOGRAM_WIDTH=1
+DEF_REUSE_HISTOGRAM_FIG_NAME="reuse_hist"
+DEF_REUSE_HISTOGRAM_PLOT_LIMIT=1000
