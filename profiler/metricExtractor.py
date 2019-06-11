@@ -248,7 +248,30 @@ class MetricExtractor():
 		#plt.xticks(indexes + width * 0.5, labels, rotation='vertical')
 		plt.title("Access Distribution of first {} addresses from file {}".format(limit, self.reader.file_name))
 		plt.xticks([], [])
+
+		if figname == DEF_HISTOGRAM_FIG_NAME:
+			figname = "{}_{}.png".format(DEF_HISTOGRAM_FIG_NAME, self.reader.file_name)
+
 		plt.savefig(figname)
+
+	def get_reuse_distance(self):
+
+		reuse_distance_dict = {}
+		reuse_distance_counter = Counter()
+
+		for access_number, block_address in enumerate(self.reader.data["block"]):
+
+			if block_address not in reuse_distance_dict:
+				reuse_distance_dict[block_address] = [-1]
+				reuse_distance_counter[-1] += 1
+			else:
+				prev_block_access = reuse_distance_dict[block_address][-1]
+				reuse_distance = access_number - prev_block_access - 1
+
+				reuse_distance_dict[block_address].append(access_number)
+
+
+
 
 
 	def __del__(self):
