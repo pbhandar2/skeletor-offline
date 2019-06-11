@@ -14,14 +14,29 @@ file_list = os.walk(folder_location).__next__()[2]
 
 for file_name in file_list:
 
-	file_location = os.path.join(folder_location, file_name)
+	try:
 
-	processor = Skeletor()
-	processor.open_file(file_location, "../trace_config.json", "MSR-Cambridge")
+		print("processing file {}".format(file_location))
 
-	profiler = processor.get_metric_extractor()
-	profiler.extract_metric()
+		file_location = os.path.join(folder_location, file_name)
 
-	profiler.get_access_distribution()
-	profiler.plot_access_distribution()
+		processor = Skeletor()
+		processor.open_file(file_location, "../trace_config.json", "MSR-Cambridge")
+
+		profiler = processor.get_metric_extractor()
+		profiler.extract_metric()
+
+		profiler.get_access_distribution()
+		profiler.plot_access_distribution()
+
+		del processor
+
+		print("done processing file {}".format(file_location))
+
+	except Exception as inst:
+
+		print(type(inst))
+		print(inst.args)
+		print(inst)
+		print("error processing file {}".format(file_location))
 
