@@ -16,9 +16,9 @@ for file_name in file_list:
 
 	try:
 
-		print("processing file {}".format(file_location))
-
 		file_location = os.path.join(folder_location, file_name)
+
+		print("processing file {}".format(file_location))
 
 		processor = Skeletor()
 		processor.open_file(file_location, "../trace_config.json", "MSR-Cambridge")
