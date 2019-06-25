@@ -3,12 +3,13 @@ from datetime import datetime
 
 class clock():
 
-    def __init__(self, _type):
+    def __init__(self, _type, unit):
         self.type = _type
         self.start_time = None 
         self.cur_time = None
         self.time_elasped = None 
         self.format = None 
+        self.unit = unit
 
     def get_time(self, time):
 
@@ -19,12 +20,13 @@ class clock():
 
             self.cur_time = filetime_to_dt(time)
 
-        elif self.type == "nano":
+        elif self.type == "timestamp":
 
-            if not self.start_time:
-                self.start_time = datetime.fromtimestamp(time // 1e9)
+            if self.unit == "nano":
+                if not self.start_time:
+                    self.start_time = datetime.fromtimestamp(time // 1e9)
 
-            self.cur_time = datetime.fromtimestamp(time // 1e9)
+                self.cur_time = datetime.fromtimestamp(time // 1e9)
 
         self.time_elasped = self.cur_time - self.start_time
 
