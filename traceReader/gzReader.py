@@ -26,6 +26,7 @@ class gzReader(AbstractReader):
         self.num_skip = config["num_skip"] if "num_skip" in config else 0
         self.clock = config["clock"]
         self.file_name = file_loc.split('/')[-1]
+        self.done = None
 
         self.data = {}
         for key in self.fields:
@@ -36,7 +37,9 @@ class gzReader(AbstractReader):
  
     def get_next_line(self):
         self.num_lines += 1
-        self.cur_line = self.file.readline().decode("utf-8").rstrip()
+
+        if not self.done:
+            self.cur_line = self.file.readline().decode("utf-8").rstrip()
 
         if len(self.cur_line):
             self.cur_fields = process_line(self.cur_line.split(self.delimiter), self.fields)
@@ -47,6 +50,7 @@ class gzReader(AbstractReader):
                     self.data[key].append(self.cur_fields[key])
         else:
             self.cur_fields = None
+            self.done = 1
             self.file.close()
 
         return self.cur_line
