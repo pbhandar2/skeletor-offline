@@ -1,4 +1,5 @@
 from traceReader.window_time_lib import filetime_to_dt
+from datetime import datetime
 
 class clock():
 
@@ -17,10 +18,15 @@ class clock():
                 self.start_time = filetime_to_dt(time)
 
             self.cur_time = filetime_to_dt(time)
-            self.time_elasped = self.cur_time - self.start_time
 
-            # print("Current time is {}".format(self.cur_time))
-            # print("Time time_elasped is {}".format(self.time_elasped))
+        elif self.type == "nano":
+
+            if not self.start_time:
+                self.start_time = datetime.fromtimestamp(time // 1e9)
+
+            self.cur_time = datetime.fromtimestamp(time // 1e9)
+
+        self.time_elasped = self.cur_time - self.start_time
 
         return self.cur_time
 

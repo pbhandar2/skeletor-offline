@@ -54,6 +54,11 @@
     "block_size": 512,
     "time_type": "timestamp",
     "time_unit": "ns",
+    "clock_config": {
+      "type": "timestamp",
+      "unit": "nano",
+      "format": "n/a"
+    },
     "time_format": "",
     "block_type": "number",
     "fields": {
