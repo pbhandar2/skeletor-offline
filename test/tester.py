@@ -21,10 +21,14 @@ def my_func():
 
 	# print(profiler.reuse_distance_array)
 
+	if len(sys.argv) > 1:
+		file_location = sys.argv[1]
+	else:
+		file_location = "../data/homes-110108-112108.20.blkparse"
 
 
 	processor = Skeletor()
-	processor.open_file("../data/homes-110108-112108.20.blkparse", "../trace_config.json", "FIU")
+	processor.open_file(file_location, "../trace_config.json", "FIU")
 	profiler = processor.get_metric_extractor()
 
 	profiler.extract_metric()
