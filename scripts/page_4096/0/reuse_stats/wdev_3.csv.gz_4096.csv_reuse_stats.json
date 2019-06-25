@@ -1,0 +1,1 @@
+"{\"nobs\": 562, \"minmax\": [3, 39], \"mean\": 6.245551601423488, \"variance\": 4.898598714801354, \"skewness\": 6.823724623894769, \"kurtosis\": 87.59745159460267, \"opt\": 0.8240469208211143, \"num_unique_obj\": 120, \"unique_obj_ratio\": 0.17595307917888564, \"avg_hit_rate\": 0.5, \"min_cache_size_70\": 8, \"min_cache_size_80\": 8, \"min_cache_size_90\": 9}"
