@@ -13,12 +13,23 @@ from skeletor import Skeletor
 #@profile
 def my_func():
 
+	# processor = Skeletor()
+	# processor.open_file("web_1.csv.gz", "../trace_config.json", "MSR-Cambridge")
+	# profiler = processor.get_metric_extractor()
+
+	# profiler.extract_metric()
+
+	# print(profiler.reuse_distance_array)
+
+
+
 	processor = Skeletor()
-	processor.open_file("web_1.csv.gz", "../trace_config.json", "MSR-Cambridge")
+	processor.open_file("../data/homes-110108-112108.20.blkparse", "../trace_config.json", "FIU")
 	profiler = processor.get_metric_extractor()
 
 	profiler.extract_metric()
 
+	print(profiler.reuse_distance_array)
 
 
 

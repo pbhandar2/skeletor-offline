@@ -60,6 +60,8 @@ class Skeletor:
 
         if (trace_type == "MSR-Cambridge"):
             self.reader = gzReader(file_loc, self.config, trace_type)
+        elif (trace_type == "FIU"):
+            self.reader = gzReader(file_loc, self.config, trace_type)
 
 
         # The config file can contain multiple configuration the trace type variable denotes which
