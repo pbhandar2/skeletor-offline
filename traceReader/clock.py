@@ -1,7 +1,8 @@
 from traceReader.window_time_lib import filetime_to_dt
 from datetime import datetime
 
-class clock():
+
+class Clock():
 
     def __init__(self, _type, unit):
         self.type = _type
@@ -22,7 +23,7 @@ class clock():
 
         elif self.type == "timestamp":
 
-            if self.unit == "nano":
+            if self.unit == "ns":
                 if not self.start_time:
                     self.start_time = datetime.fromtimestamp(time // 1e9)
 

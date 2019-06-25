@@ -48,18 +48,14 @@
   },
   {
     "name": "FIU",
-    "file_format": "txt",
+    "file_format": "tar",
     "delimiter": " ",
-    "format": "txt",
     "block_size": 512,
-    "time_type": "timestamp",
-    "time_unit": "ns",
+    "page_size": 4096,
     "clock_config": {
       "type": "timestamp",
-      "unit": "nano",
-      "format": "n/a"
+      "unit": "ns"
     },
-    "time_format": "",
     "block_type": "number",
     "fields": {
       "time": {

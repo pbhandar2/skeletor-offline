@@ -11,10 +11,12 @@ import numpy as np
 from traceReader.abstractReader import AbstractReader
 from traceReader.readerLib import process_line
 
-class gzReader(AbstractReader):
+
+class GZReader(AbstractReader):
 
     def __init__(self, file_loc, config, trace_type):
-        super(gzReader, self).__init__(file_loc)
+
+        super(GZReader, self).__init__(file_loc)
         self.file = gzip.open(file_loc, "r") # the file to be read
         self.num_lines = 0 # the number of lines in the trace file
         self.delimiter = config["delimiter"]

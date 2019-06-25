@@ -5,3 +5,5 @@ test/web_0.csv.gz
 *.dat
 data/test.csv
 data/homes-1101108-1121108.20.blkparse
+data/mail-02.tar.gz
+.idea
