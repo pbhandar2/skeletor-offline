@@ -32,35 +32,54 @@ class MetricExtractor():
         self.reader = reader
         self.reuse_distance_array = []
         self.page_accessed = []
+        self.metrics = {
+            "num_sequential_page_access": 0,
+            "sequential_page_access_length": {
+                "min": math.inf,
+                "max": 0,
+                "mean": 0,
+                "total": 0
+            }
+        }
 
-        self.metrics = None
-        self.window = window_size
-        self.window_metrics_array = []
-        self.reuse_distance_distribution = None
-        self.reuse_distance_counter = None
-        self.access_distribution = None
-        self.reuse_distance_dict = {}
+        self.splay_tree = SplayTree()
+        self.prev_page = None
+        self.prev_block = None
+
+    def process_reuse_distance(self, cur_data):
+        cur_page = math.floor(cur_data["block"] / self.reader.block_size)
+
+        if self.reader.trace_type == "FIU":
+            end_page = math.floor((cur_data["block"] + cur_data["size"] * 512) / self.reader.block_size)
+        else:
+            end_page = math.floor((cur_data["block"] + cur_data["size"]) / self.reader.block_size)
+
+        while cur_page <= end_page:
+            reuse_distance = self.splay_tree.find(cur_page)
+            self.page_accessed.append(cur_page)
+            self.reuse_distance_array.append(reuse_distance)
+            cur_page += 1
+
+    def check_sequentiality(self, cur_data):
+        # CHECK SEQUENTIALITY IN BLOCK GRANULARITY
+        # GET INFORMATION ON THE SEQUENTIALITY LEGNTH
+        # SHOULD BE A WAY TO DISTINGUISH READ/WRITE SEQUENTIALITY
+
+        start_page = math.floor(cur_data["block"] / self.reader.block_size)
+
+        if start_page == self.prev_page + 1:
+            self.metrics.num_sequential_page_access += 1
 
     def extract_metric(self, window_size=DEF_WINDOW_SIZE):
         print("Metric Extraction initiated ...")
 
         cur_data = self.reader.get_next_line_data()
-        splay_tree = SplayTree()
 
         while cur_data:
+            self.process_reuse_distance(cur_data)
 
-            cur_page = math.floor(cur_data["block"] / self.reader.block_size)
-
-            if self.reader.trace_type == "FIU":
-                end_page = math.ceil((cur_data["block"] + cur_data["size"]*512) / self.reader.block_size)
-            else:
-                end_page = math.ceil((cur_data["block"] + cur_data["size"]) / self.reader.block_size)
-
-            while cur_page < end_page:
-                reuse_distance = splay_tree.find(cur_page)
-                self.page_accessed.append(cur_page)
-                self.reuse_distance_array.append(reuse_distance)
-                cur_page += 1
+            # check for sequentiality in block and page granularity
+            self.check_sequentiality(cur_data)
 
             cur_data = self.reader.get_next_line_data()
 

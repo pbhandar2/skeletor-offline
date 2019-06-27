@@ -23,18 +23,24 @@ with open("summary.csv", "w+") as g:
 				skew = data["skewness"]
 				kurt = data["kurtosis"]
 				cache_size = data["min_cache_size_70"]
+				unique_obj_ratio = data["unique_obj_ratio"]
 				net_diff_in_cache_size = cache_size - int(math.ceil(avg))
 
 				error = net_diff_in_cache_size/cache_size
 
-				write_txt = "{},{},{},{},{},{},{},{},{}\n".format(file_name, max_reuse, avg, var, skew, kurt, cache_size, net_diff_in_cache_size, error)
+				write_txt = "{},{},{},{},{},{},{},{},{},{}\n".format(
+					file_name,
+					max_reuse,
+					avg, var, skew, kurt,
+					cache_size, net_diff_in_cache_size,
+					error, unique_obj_ratio)
 
-				array_dict.append([file_name, max_reuse, avg, var, skew, kurt, cache_size, net_diff_in_cache_size, error])
+				array_dict.append([file_name, max_reuse, avg, var, skew, kurt, cache_size, net_diff_in_cache_size, error, unique_obj_ratio])
 
 				
 				g.write(write_txt)
 
-labels = ["file_name", "max", "mean", "var", "skew", "kurt", "size", "net_size", "error"]
+labels = ["file_name", "max", "mean", "var", "skew", "kurt", "size", "net_size", "error", "unique_ratio"]
 
 array_dict = sorted(array_dict, key=lambda k: k[3])
 from tabulate import tabulate

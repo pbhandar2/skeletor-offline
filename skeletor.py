@@ -25,6 +25,7 @@ class Skeletor:
     def __init__(self):
         self.profiler = None
         self.config = None
+        self.file_loc = None
 
     def open_file(self, file_loc, config_file_location, trace_type):
         """
@@ -35,6 +36,7 @@ class Skeletor:
             trace_type -- The type of trace used to identify the correct configuration from the configuration file 
         """
 
+        self.file_loc = file_loc
         self.config = check_config(config_file_location, trace_type)
         if "block_size" not in self.config:
             self.config["block_size"] = DEF_BLOCK_SIZE
