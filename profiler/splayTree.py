@@ -1,8 +1,16 @@
+# coding=utf-8
+
+"""
+Splay Tree to get the reuse distance of each request.
+
+Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
+"""
+
+
 class SplayTree:
     def __init__(self):
         self.root = None
         self.num_nodes = 0
-        self.keys = []
 
     def find(self, key):
 
@@ -24,7 +32,6 @@ class SplayTree:
         else:
             new_node = Node(key)
             self.insert(prev_node, new_node)
-            self.keys.append(key)
             self.splay(new_node)
             return -1
 
@@ -65,7 +72,6 @@ class SplayTree:
         else:
             self.rotate_right(node)
 
-        self.swap_parents(node)
         self.root = node
 
     def zig_zig(self, node, side):
@@ -73,47 +79,38 @@ class SplayTree:
         if side == "right":
 
             self.rotate_right(node.parent)
-            self.swap_parents(node.parent)
 
             if node.parent == self.root:
                 self.zig(node)
             else:
                 self.rotate_right(node)
-                self.swap_parents(node)
 
         else:
             self.rotate_left(node.parent)
-            self.swap_parents(node.parent)
 
             if node.parent == self.root:
                 self.zig(node)
             else:
                 self.rotate_left(node)
-                self.swap_parents(node)
 
     def zig_zag(self, node, side):
 
         if side == "right":
             self.rotate_right(node)
-            self.swap_parents(node)
 
             if node.parent == self.root:
                 self.zig(node)
             else:
                 self.rotate_left(node)
-                self.swap_parents(node)
         else:
             self.rotate_left(node)
-            self.swap_parents(node)
 
             if node.parent == self.root:
                 self.zig(node)
             else:
                 self.rotate_right(node)
-                self.swap_parents(node)
 
-    @staticmethod
-    def rotate_right(node):
+    def rotate_right(self, node):
 
         node.parent.left = node.right
 
@@ -121,9 +118,9 @@ class SplayTree:
             node.right.parent = node.parent
 
         node.right = node.parent
+        self.swap_parents(node)
 
-    @staticmethod
-    def rotate_left(node):
+    def rotate_left(self, node):
 
         node.parent.right = node.left
 
@@ -131,6 +128,7 @@ class SplayTree:
             node.left.parent = node.parent
 
         node.left = node.parent
+        self.swap_parents(node)
 
     def swap_parents(self, node):
         parent_node = node.parent
