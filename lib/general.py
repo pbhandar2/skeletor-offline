@@ -1,4 +1,7 @@
 import json
+from const import *
+import logging
+from traceReader.clock import Clock
 
 
 def check_config(json_file_location, trace_type):
@@ -23,5 +26,25 @@ def check_config(json_file_location, trace_type):
             "Please check to make sure that the name provided matches the name "
             "field in one of the json entries in the file.".format(
                 trace_type, json_file_location))
+
+    if "block_size" not in trace_type_config:
+        trace_type_config["block_size"] = DEF_BLOCK_SIZE
+        logging.warning("Block Size not included in the config file using the default block size of 512")
+
+    if "page_size" not in trace_type_config:
+        trace_type_config["page_size"] = DEF_BLOCK_SIZE
+        logging.warning("Block Size not included in the config file using the default page size of 512")
+
+    if "clock_config" in trace_type_config:
+        trace_type_config["clock"] = Clock(
+            trace_type_config["clock_config"]["type"],
+            unit=trace_type_config["clock_config"]["unit"]
+        )
+    else:
+        clock_type = "timestamp"
+        clock_unit = "ns"
+        trace_type_config["clock"] = Clock(clock_type, unit=clock_unit)
+        logging.warning("""Clock not included in config. Using default clock type
+            which treats time as timestamps with the unit as nanoseconds""")
 
     return trace_type_config

@@ -24,6 +24,7 @@ class GZReader(AbstractReader):
         self.fields = config["fields"]
         self.trace_type = trace_type
         self.block_size = config["block_size"]
+        self.page_size = config["page_size"]
         self.cur_line = None
         self.cur_fields = None
         self.num_skip = config["num_skip"] if "num_skip" in config else 0

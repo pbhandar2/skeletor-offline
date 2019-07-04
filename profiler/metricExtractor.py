@@ -37,6 +37,7 @@ class MetricExtractor():
 
         # This is set to -2 because the initial accesses cannot be sequential and the page value cannot be -1
         self.prev_page = -2
+        self.metrics = defaultdict(int)
 
     def process_reuse_distance(self, cur_page):
         reuse_distance = self.splay_tree.find(cur_page)
@@ -52,17 +53,21 @@ class MetricExtractor():
         print("Metric Extraction initiated ...")
 
         cur_data = self.reader.get_next_line_data()
+        cur_line = 0
 
         while cur_data:
-            cur_page = math.floor(cur_data["block"] / self.reader.block_size)
-            end_page = math.floor((cur_data["block"] + cur_data["size"]) / self.reader.block_size)
+            cur_page = math.floor(cur_data["block"] / self.reader.page_size)
+            end_page = math.floor((cur_data["block"] + cur_data["size"]) / self.reader.page_size)
             self.page_accessed.add(cur_page)
 
             while cur_page <= end_page:
                 self.process_reuse_distance(cur_page)
                 self.process_seq_access(cur_data)
+                cur_page += 1
 
             cur_data = self.reader.get_next_line_data()
+            cur_line += 1
+            print(cur_line)
 
         # 	if window_start_time == None:
         # 		window_start_time = self.reader.clock.cur_time

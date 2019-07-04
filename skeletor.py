@@ -9,15 +9,11 @@ Currently supports:
 Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 """
 
-import logging
-
 from traceReader.gzReader import GZReader
 from traceReader.tarReader import TARReader
-from traceReader.clock import Clock
 from profiler.ioProfiler import IOProfiler
 from profiler.metricExtractor import MetricExtractor
 from lib.general import check_config
-from const import *
 
 
 class Skeletor:
@@ -26,6 +22,7 @@ class Skeletor:
         self.profiler = None
         self.config = None
         self.file_loc = None
+        self.reader = None
 
     def open_file(self, file_loc, config_file_location, trace_type):
         """
@@ -38,21 +35,6 @@ class Skeletor:
 
         self.file_loc = file_loc
         self.config = check_config(config_file_location, trace_type)
-        if "block_size" not in self.config:
-            self.config["block_size"] = DEF_BLOCK_SIZE
-            logging.warning("Block Size not included in the config file using the default block size of 512")
-
-        if "clock_config" in self.config:
-            self.config["clock"] = Clock(
-                self.config["clock_config"]["type"],
-                unit=self.config["clock_config"]["unit"]
-            )
-        else:
-            clock_type = "timestamp"
-            clock_unit = "ns"
-            self.config["clock"] = Clock(clock_type, unit=clock_unit)
-            logging.warning("""Clock not included in config. Using default clock type
-                which treats time as timestamps with the unit as nanoseconds""")
 
         if trace_type == "MSR-Cambridge":
             self.reader = GZReader(file_loc, self.config, trace_type)
@@ -63,32 +45,6 @@ class Skeletor:
                 make sure that you have the config file set up correctly with the correct
                 trace_type name.""")
 
-    def get_next_line(self):
-        """
-        Returns the next line of the trace file.
-        """
-
-        return self.reader.get_next_line()
-
-    def get_next_line_array(self):
-        """
-        Returns the next line of the trace file.
-        """
-
-        return self.reader.get_next_line_array()
-
-    def get_io_profiler(self):
-        """
-        Returns the next line of the trace file.
-        """
-
-        if self.reader:
-            if self.profiler is None:
-                self.profiler = IOProfiler(self.reader)
-        else:
-            raise Exception("You need to open a file using open_file in order to get data to plot.")
-
-        return self.profiler
 
     def get_metric_extractor(self):
         """
