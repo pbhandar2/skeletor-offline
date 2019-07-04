@@ -17,6 +17,7 @@ class GZReader(AbstractReader):
     def __init__(self, file_loc, config, trace_type):
 
         super(GZReader, self).__init__(file_loc)
+
         self.file = gzip.open(file_loc, "r") # the file to be read
         self.num_lines = 0 # the number of lines in the trace file
         self.delimiter = config["delimiter"]
@@ -44,7 +45,7 @@ class GZReader(AbstractReader):
             self.cur_line = self.file.readline().decode("utf-8").rstrip()
 
         if len(self.cur_line):
-            self.cur_fields = process_line(self.cur_line.split(self.delimiter), self.fields)
+            self.cur_fields = process_line(self.cur_line.split(self.delimiter), self.fields, self.block_size)
             for key in self.cur_fields:
                 if key == "time":
                     self.data[key].append(self.clock.get_time(self.cur_fields[key]))

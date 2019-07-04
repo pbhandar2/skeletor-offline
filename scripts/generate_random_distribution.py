@@ -14,7 +14,7 @@ output_location = sys.argv[1]
 for a in np.arange(1.1, 4.0, step=0.05):
 
     # create zipf distribution
-    s = np.random.zipf(float(a), size=int(1e8))
+    s = np.random.zipf(float(a), size=int(1e5))
 
     # roll a die for sequentiality
     seq_chances = random.uniform(0.2,0.7)

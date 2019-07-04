@@ -43,12 +43,10 @@ class Skeletor:
             logging.warning("Block Size not included in the config file using the default block size of 512")
 
         if "clock_config" in self.config:
-            clock_type = self.config["clock_config"]["type"]
-            clock_unit = self.config["clock_config"]["unit"]
-            if clock_type == "windows":
-                self.config["clock"] = Clock(clock_type, unit=clock_unit)
-            elif clock_type == "timestamp":
-                self.config["clock"] = Clock(clock_type, unit=clock_unit)
+            self.config["clock"] = Clock(
+                self.config["clock_config"]["type"],
+                unit=self.config["clock_config"]["unit"]
+            )
         else:
             clock_type = "timestamp"
             clock_unit = "ns"

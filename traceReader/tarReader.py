@@ -6,8 +6,6 @@ Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 """
 
 import tarfile
-import numpy as np
-
 from traceReader.abstractReader import AbstractReader
 from traceReader.readerLib import process_line
 
@@ -48,7 +46,7 @@ class TARReader(AbstractReader):
             self.cur_line = self.file.readline().decode("utf-8").rstrip()
 
         if len(self.cur_line):
-            self.cur_fields = process_line(self.cur_line.split(self.delimiter), self.fields)
+            self.cur_fields = process_line(self.cur_line.split(self.delimiter), self.fields, self.block_size)
             for key in self.cur_fields:
                 if key == "time":
                     self.data[key].append(self.clock.get_time(self.cur_fields[key]))

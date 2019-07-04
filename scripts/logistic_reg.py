@@ -29,6 +29,10 @@ while line:
 
 print(data)
 
+from sklearn.preprocessing import normalize
+
+data = normalize(data)
+
 np.random.shuffle(data)
 
 data = np.array(data).reshape(-1, len(data[0]))

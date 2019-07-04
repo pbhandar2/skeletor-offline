@@ -19,7 +19,7 @@ def my_func():
     profiler = processor.get_metric_extractor()
     profiler.extract_metric()
 
-    pdb.set_trace()
+    print(profiler.reuse_distance_array)
 
 
 if __name__ == '__main__':
