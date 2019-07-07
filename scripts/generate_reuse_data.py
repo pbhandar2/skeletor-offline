@@ -15,10 +15,11 @@ if __name__ == "__main__":
 
     file_list = os.walk(sys.argv[1]).__next__()[2]
     entropy_array = []
-    f = open("entropy_{}.csv".format(sys.argv[2]))
+    f = open("entropy_{}.csv".format(sys.argv[2]), "w+")
 
     for file_name in file_list:
         if ".gz" in file_name:
+            print("Working on {}".format(file_name))
             try:
                 entropy = generate_reuse_data(os.path.join(sys.argv[1], file_name), sys.argv[2])
                 f.write("{},{}\n".format(file_name, entropy))
@@ -27,7 +28,8 @@ if __name__ == "__main__":
                 print(inst.args)
                 print(inst)
                 print("error processing file {}".format(file_name))
-                
+            print("Done working on {}".format(file_name))
+
     f.close()
 
 
