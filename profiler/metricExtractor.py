@@ -40,6 +40,7 @@ class MetricExtractor():
         self.window_times = []
         self.window_index = []
         self.peaks = None
+        self.num_pages = 0
 
         # This is set to -2 because the initial accesses cannot be sequential and the page value cannot be -1
         self.prev_page = -2
@@ -47,6 +48,8 @@ class MetricExtractor():
 
     def process_reuse_distance(self, cur_page):
         reuse_distance = self.splay_tree.find(cur_page)
+        if reuse_distance == -1:
+            self.num_pages += 1
         self.reuse_distance_array.append(reuse_distance)
         self.reuse_distance_dict[cur_page].append(reuse_distance)
         self.reuse_distance_count[cur_page] += 1
