@@ -45,7 +45,6 @@ class Skeletor:
                 make sure that you have the config file set up correctly with the correct
                 trace_type name.""")
 
-
     def get_metric_extractor(self):
         """
         Returns the next line of the trace file.

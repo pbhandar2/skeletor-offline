@@ -36,7 +36,7 @@ class GZReader(AbstractReader):
         for key in self.fields:
             self.data[key] = []
 
-        if (self.num_skip > 0):
+        if self.num_skip > 0:
             self.skip_lines(self.num_skip)
  
     def get_next_line(self):

@@ -7,6 +7,7 @@ Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 
 from traceReader.abstractReader import AbstractReader
 from profiler.splayTree import SplayTree
+import pdb
 
 # it wouldn't work without this in mjolnir
 import matplotlib
@@ -16,7 +17,8 @@ matplotlib.use("agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from statsmodels.tsa.stattools import acf
-from scipy.stats import describe
+from scipy.stats import describe, entropy
+from scipy.signal import find_peaks
 from const import *
 import math
 from collections import defaultdict, Counter
@@ -34,6 +36,10 @@ class MetricExtractor():
         self.reuse_distance_dict = defaultdict(list)
         self.reuse_distance_count = Counter()
         self.page_accessed = set()
+        self.window_size = DEF_WINDOW_SIZE
+        self.window_times = []
+        self.window_index = []
+        self.peaks = None
 
         # This is set to -2 because the initial accesses cannot be sequential and the page value cannot be -1
         self.prev_page = -2
@@ -47,27 +53,46 @@ class MetricExtractor():
 
     def process_seq_access(self, cur_page):
         if cur_page == self.prev_page + 1:
-            self.metrics.num_sequential_page_access += 1
+            self.metrics["num_sequential_page_access"] += 1
 
-    def extract_metric(self, window_size=DEF_WINDOW_SIZE):
+    def extract_metric(self, plot_reuse_per_page=0):
         print("Metric Extraction initiated ...")
 
         cur_data = self.reader.get_next_line_data()
+
+        window_start_time = self.reader.clock.cur_time
+        window_start_index = 0
         cur_line = 0
 
         while cur_data:
             cur_page = math.floor(cur_data["block"] / self.reader.page_size)
             end_page = math.floor((cur_data["block"] + cur_data["size"]) / self.reader.page_size)
-            self.page_accessed.add(cur_page)
 
             while cur_page <= end_page:
                 self.process_reuse_distance(cur_page)
-                self.process_seq_access(cur_data)
+                self.process_seq_access(cur_page)
+                self.page_accessed.add(cur_page)
+                self.prev_page = cur_page
                 cur_page += 1
 
             cur_data = self.reader.get_next_line_data()
             cur_line += 1
-            print(cur_line)
+
+            if (self.reader.clock.cur_time - window_start_time).total_seconds() >= self.window_size:
+                self.window_times.append((window_start_time, self.reader.clock.cur_time))
+                self.window_index.append((window_start_index, cur_line))
+                window_start_time = self.reader.clock.cur_time
+                window_start_index = cur_line
+
+        pdf = list(map(lambda k: k/self.reader.num_lines, list(self.reuse_distance_count.values())))
+        self.metrics["entropy"] = entropy(pdf)
+        self.metrics["num_page_accessed"] = self.reader.num_lines
+
+        most_common = self.reuse_distance_count.most_common(plot_reuse_per_page)
+
+        for i, item in enumerate(most_common):
+            self.plot_reuse_dist_over_time_per_page(self.reuse_distance_dict[item[0]], i)
+
 
         # 	if window_start_time == None:
         # 		window_start_time = self.reader.clock.cur_time
@@ -322,6 +347,16 @@ class MetricExtractor():
 
         plt.savefig(figname)
         plt.close()
+
+    def plot_reuse_dist_over_time_per_page(self, reuse_distance_array, page_rank):
+        plot_name = "{}_reuse_dist_{}.png".format(self.reader.file_loc, page_rank)
+        plt.plot(reuse_distance_array)
+        plt.title("Reuse Distance of page rank {} in file {}".format(page_rank, self.reader.file_loc.split("/")[-1]))
+        plt.xlabel("Time in terms of reference")
+        plt.ylabel("Reuse Distance")
+        plt.savefig(plot_name)
+        plt.close()
+
 
     def __del__(self):
         print("Destroyed MetricExtractor object!")
