@@ -7,7 +7,8 @@ def main(file_loc):
     processor = Skeletor()
     processor.open_file(file_loc, "../trace_config.json", "MSR-Cambridge")
     profiler = processor.get_metric_extractor()
-    profiler.extract_metric(plot_reuse_per_page=10)
+    profiler.extract_metric()
+
     pdb.set_trace()
 
 
