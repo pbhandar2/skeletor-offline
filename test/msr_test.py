@@ -8,7 +8,6 @@ def main(file_loc):
     processor.open_file(file_loc, "../trace_config.json", "MSR-Cambridge")
     profiler = processor.get_metric_extractor()
     profiler.extract_metric()
-
     pdb.set_trace()
 
 

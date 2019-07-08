@@ -354,7 +354,7 @@ class MetricExtractor():
         plt.title("Reuse Distance of page rank {} in file {}".format(page_rank, self.reader.file_loc.split("/")[-1]))
         plt.xlabel("Time in terms of reference")
         plt.ylabel("Reuse Distance")
-        plt.savefig(plot_name)
+        plt.savefig(plot_dir)
         plt.close()
 
     def plot_reuse_dist_top_k_pages(self, k, output_dir):
