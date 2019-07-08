@@ -21,6 +21,7 @@ from scipy.stats import describe, entropy
 from scipy.signal import find_peaks
 from const import *
 import math
+import os
 from collections import defaultdict, Counter
 
 
@@ -90,11 +91,6 @@ class MetricExtractor():
         pdf = list(map(lambda k: k/self.reader.num_lines, list(self.reuse_distance_count.values())))
         self.metrics["entropy"] = entropy(pdf)
         self.metrics["num_page_accessed"] = self.reader.num_lines
-
-        most_common = self.reuse_distance_count.most_common(plot_reuse_per_page)
-
-        for i, item in enumerate(most_common):
-            self.plot_reuse_dist_over_time_per_page(self.reuse_distance_dict[item[0]], i)
 
 
         # 	if window_start_time == None:
@@ -351,8 +347,9 @@ class MetricExtractor():
         plt.savefig(figname)
         plt.close()
 
-    def plot_reuse_dist_over_time_per_page(self, reuse_distance_array, page_rank):
+    def plot_reuse_dist_over_time_per_page(self, reuse_distance_array, page_rank, output_dir):
         plot_name = "{}_reuse_dist_{}.png".format(self.reader.file_loc, page_rank)
+        plot_dir = os.path.join(output_dir, plot_name)
         plt.plot(reuse_distance_array)
         plt.title("Reuse Distance of page rank {} in file {}".format(page_rank, self.reader.file_loc.split("/")[-1]))
         plt.xlabel("Time in terms of reference")
@@ -360,6 +357,11 @@ class MetricExtractor():
         plt.savefig(plot_name)
         plt.close()
 
+    def plot_reuse_dist_top_k_pages(self, k, output_dir):
+        most_common = self.reuse_distance_count.most_common(k)
+
+        for i, item in enumerate(most_common):
+            self.plot_reuse_dist_over_time_per_page(self.reuse_distance_dict[item[0]], i, output_dir)
 
     def __del__(self):
         print("Destroyed MetricExtractor object!")
