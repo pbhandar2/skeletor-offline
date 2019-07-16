@@ -7,7 +7,7 @@ import numpy as np
 def main():
 
     ts_file_loc = sys.argv[1]
-    df = pd.read_csv(ts_file_loc, names=["ts"], dtype={"ts": int, "id": int, "time": int})
+    df = pd.read_csv(ts_file_loc, dtype={"ts": int, "id": int, "time": int})
     # df.insert(0, "time", pd.Series(range(0, len(df)), dtype='int32'))
     # df.insert(1, "id", pd.Series([1]*len(df), dtype='int32'))
 
