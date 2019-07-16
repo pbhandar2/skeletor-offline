@@ -9,7 +9,7 @@ def main():
     ts = pd.read_csv(ts_file_loc, names=["ts"], dtype={"ts": int})
     extracted_features = extract_features(ts, column_id="id", column_sort="time", column_value="ts", n_jobs=8, show_warnings=False,
                                                           default_fc_parameters=ComprehensiveFCParameters())
-    extracted_features.to_csv("ext_features.csv")
+    extracted_features.to_csv(sys.argv[2])
 
 if __name__ == "__main__":
     main()
