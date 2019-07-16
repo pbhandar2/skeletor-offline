@@ -13,6 +13,11 @@ def main():
 
     print(df.head())
 
+    limit = int(sys.argv[3])
+
+    if limit == -1:
+        limit = len(df)
+
     # limit = 2
     # id_array = np.ones(limit)
     # ts_array = np.random.rand(1, limit)
@@ -26,7 +31,7 @@ def main():
 
 
 
-    extracted_features = extract_features(df, column_id="id", column_sort="time", column_value="ts", n_jobs=8, show_warnings=False,
+    extracted_features = extract_features(df[:limit], column_id="id", column_sort="time", column_value="ts", n_jobs=8, show_warnings=False,
                                                           default_fc_parameters=EfficientFCParameters())
 
     extracted_features.to_csv(sys.argv[2])
