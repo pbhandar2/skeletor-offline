@@ -6,7 +6,7 @@ import pandas as pd
 def main():
 
     ts_file_loc = sys.argv[1]
-    ts = pd.read_csv(ts_file_loc, names=["ts"], dtype={"ts": int})
+    ts = pd.read_csv(ts_file_loc)
     extracted_features = extract_features(ts, column_id="id", column_sort="time", column_value="ts", n_jobs=8, show_warnings=False,
                                                           default_fc_parameters=ComprehensiveFCParameters())
     extracted_features.to_csv(sys.argv[2])
