@@ -18,7 +18,7 @@ def main(data_dir, data_type, file_name_filer=None):
             file_name = file_name.split("/")[-1].replace("\\", "")
             print("Processing {}".format(file_name))
             processor = Skeletor()
-            processor.open_file(os.path.join(data_dir, file_name), "./trace_config.json", data_type)
+            processor.open_file(os.path.join(data_dir, file_name), "../trace_config.json", data_type)
             processor.workload_change()
         # profiler = processor.get_metric_extractor(window_size=86400)
         # profiler.extract_metric()

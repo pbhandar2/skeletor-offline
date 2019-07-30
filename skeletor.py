@@ -114,7 +114,7 @@ class Skeletor:
             window_count += 1
             print(rd_stats)
             with open("{}_{}.json".format(file_name, window_count), 'w+') as outfile:
-                json.dump(rd_stats, outfile)
+                json.dump(json.dumps(rd_stats), outfile)
 
         plt.legend()
         plt.savefig("{}_{}.png".format(file_name, window_count))
