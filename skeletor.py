@@ -114,7 +114,10 @@ class Skeletor:
             window_count += 1
             print(rd_stats)
             with open("{}_{}.json".format(file_name, window_count), 'w+') as outfile:
-                json.dump(json.dumps(rd_stats), outfile)
+                try:
+                    json.dump(json.dumps(rd_stats), outfile)
+                except TypeError:
+                    print("Error in file: {}, start: {} and end: {}".format(file_name, start, end))
 
         plt.legend()
         plt.savefig("{}_{}.png".format(file_name, window_count))
