@@ -56,5 +56,9 @@ def main(data_dir, data_type, file_name_filer=None):
 
 if __name__ == "__main__":
 
-    type = "FIU"
+    if len(sys.argv) == 3:
+        type = sys.argv[2]
+    else:
+        type = "FIU"
+        
     main(sys.argv[1], type, file_name_filer=lambda k: k if ".gz" in k else False)
