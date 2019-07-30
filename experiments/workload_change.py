@@ -9,12 +9,12 @@ matplotlib.use("agg")
 import matplotlib.pyplot as plt
 
 
-def main(data_dir):
+def main(data_dir, data_type):
     for file_location in shared.get_file_list(data_dir):
         file_name = file_location.split("/")[-1].replace("\\", "")
         print("Processing {}".format(file_name))
         processor = Skeletor()
-        processor.open_file(file_location, "../trace_config.json", "FIU")
+        processor.open_file(file_location, "../trace_config.json", data_type)
         profiler = processor.get_metric_extractor(window_size=86400)
         profiler.extract_metric()
         reuse_distance_array = profiler.reuse_distance_array
@@ -50,4 +50,5 @@ def main(data_dir):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    type = "MSR-Cambridge"
+    main(sys.argv[1], type)
