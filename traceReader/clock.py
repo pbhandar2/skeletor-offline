@@ -38,7 +38,7 @@ class Clock():
                 self.cur_time = time // 1e9
 
         self.time_elasped = self.cur_time - self.start_time
-
+        #print("Cur time: {}".format(self.cur_time))
         return self.cur_time
 
     def get_start_time(self):
@@ -53,7 +53,9 @@ class Clock():
     def get_time_diff(self, time_value):
         if self.type == "relative":
             if self.unit == "ns":
-                return (self.cur_time - time_value)//1e9
+                #print("Cur time: {} and time value: {} and diff: {}".format(self.cur_time, time_value, self.cur_time - time_value))
+                diff = self.cur_time - time_value
+                return diff/1e9
         elif self.type == "windows" or self.type == "timestamp":
             return (self.cur_time - time_value).total_seconds()
 

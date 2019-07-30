@@ -82,6 +82,9 @@ class MetricExtractor():
             cur_data = self.reader.get_next_line_data()
             cur_line += 1
 
+
+            print(self.reader.clock.get_time_diff(window_start_time))
+
             if self.reader.clock.get_time_diff(window_start_time) >= self.window_size:
                 self.window_times.append((window_start_time, self.reader.clock.cur_time))
                 self.window_index.append((window_start_index, cur_line))
