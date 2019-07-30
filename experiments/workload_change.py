@@ -9,8 +9,8 @@ matplotlib.use("agg")
 import matplotlib.pyplot as plt
 
 
-def main(data_dir, data_type):
-    for file_location in shared.get_file_list(data_dir):
+def main(data_dir, data_type, file_name_filer=None):
+    for file_location in shared.get_file_list(data_dir, file_name_filter=file_name_filer):
         file_name = file_location.split("/")[-1].replace("\\", "")
         print("Processing {}".format(file_name))
         processor = Skeletor()
@@ -50,5 +50,6 @@ def main(data_dir, data_type):
 
 
 if __name__ == "__main__":
+
     type = "MSR-Cambridge"
-    main(sys.argv[1], type)
+    main(sys.argv[1], type, lambda k: k if ".gz" in k else False)
