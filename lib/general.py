@@ -80,6 +80,7 @@ def get_reuse_distance_features(raw_reuse_distance_array, plot_flag=False, plot_
     rd_stats = dict(describe(reuse_distance_array)._asdict())
     rd_counter = Counter(reuse_distance_array)
     rd_stats["num_unique"] = unique_object_count
+    rd_stats["opt"] = unique_object_count/(unique_object_count+rd_stats["nobs"])
     hit_rate_array = get_hit_rate(reuse_distance_array, rd_stats)
     return rd_stats, hit_rate_array
 
