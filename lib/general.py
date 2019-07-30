@@ -64,10 +64,22 @@ def get_file_list(data_dir, file_name_filter=None):
                 yield os.path.join(data_dir, file_name)
 
 
-def get_reuse_distance_features(reuse_distance_array, plot_flag=False, plot_count=100000):
+def filter_reuse_distance(reuse_distance_array):
+    filtered_reuse_distance_array = []
+    unique_object_count = 0
+    for rd in reuse_distance_array:
+        if rd != -1:
+            filtered_reuse_distance_array.append(rd)
+        else:
+            unique_object_count += 1
+    return filtered_reuse_distance_array, unique_object_count
+
+
+def get_reuse_distance_features(raw_reuse_distance_array, plot_flag=False, plot_count=100000):
+    reuse_distance_array, unique_object_count = filter_reuse_distance(raw_reuse_distance_array)
     rd_stats = dict(describe(reuse_distance_array)._asdict())
     rd_counter = Counter(reuse_distance_array)
-    rd_stats["num_unique"] = rd_counter[-1]
+    rd_stats["num_unique"] = unique_object_count
     hit_rate_array = get_hit_rate(reuse_distance_array, rd_stats)
     return rd_stats, hit_rate_array
 
