@@ -101,8 +101,9 @@ class Skeletor:
             rd_stats, hit_rate_array = get_reuse_distance_features(reuse_distance_array[start:end])
             hit_rate_list = [0.7, 0.8, 0.9]
             cur_hr = 0
+            opt = rd_stats["opt"]
             for i, hr in enumerate(hit_rate_array):
-                if hr > hit_rate_list[cur_hr]:
+                if hr > hit_rate_list[cur_hr]*opt:
                     rd_stats["hr_{}".format(hit_rate_list[cur_hr])] = i
                     cur_hr += 1
                     if cur_hr == len(hit_rate_list):
@@ -114,8 +115,10 @@ class Skeletor:
             window_count += 1
             print(rd_stats)
             with open("{}_{}.json".format(file_name, window_count), 'w+') as outfile:
+                json_string = json.dumps(rd_stats, sort_keys=True, indent=4)
+                print(json_string)
                 try:
-                    json.dump(json.dumps(rd_stats), outfile)
+                    json.dump(json.dumps(rd_stats, sort_keys=True, indent=4), outfile)
                 except TypeError:
                     print("Error in file: {}, start: {} and end: {}".format(file_name, start, end))
 
