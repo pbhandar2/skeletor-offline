@@ -84,7 +84,7 @@ def get_reuse_distance_features(raw_reuse_distance_array, plot_flag=False, plot_
     rd_stats["num_unique"] = unique_object_count
     rd_stats["opt"] = unique_object_count/(unique_object_count+rd_stats["nobs"])
     rd_stats["minmax"] = [rd_stats["minmax"][0], rd_stats["minmax"][1]]
-    hit_rate_array = get_hit_rate(reuse_distance_array, rd_stats)
+    hit_rate_array = get_hit_rate(rd_counter, rd_stats)
     return rd_stats, hit_rate_array
 
 
