@@ -1,4 +1,4 @@
-import experiments.shared as shared
+
 import sys
 import json
 from skeletor import Skeletor
@@ -60,5 +60,5 @@ if __name__ == "__main__":
         type = sys.argv[2]
     else:
         type = "FIU"
-        
+
     main(sys.argv[1], type, file_name_filer=lambda k: k if ".gz" in k else False)
