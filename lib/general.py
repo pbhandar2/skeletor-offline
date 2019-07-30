@@ -6,6 +6,8 @@ import os
 from collections import Counter
 from scipy.stats import describe
 
+def numpyint_to_int(o):
+    return int(o)
 
 def check_config(json_file_location, trace_type):
     try:

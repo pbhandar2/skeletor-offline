@@ -13,7 +13,7 @@ from traceReader.gzReader import GZReader
 from traceReader.tarReader import TARReader
 from profiler.ioProfiler import IOProfiler
 from profiler.metricExtractor import MetricExtractor
-from lib.general import check_config, get_file_list, get_reuse_distance_features, get_hit_rate
+from lib.general import check_config, get_file_list, get_reuse_distance_features, get_hit_rate, numpyint_to_int
 from const import *
 import json
 
@@ -115,10 +115,10 @@ class Skeletor:
             window_count += 1
             print(rd_stats)
             with open("{}_{}.json".format(file_name, window_count), 'w+') as outfile:
-                json_string = json.dumps(rd_stats, sort_keys=True, indent=4)
+                json_string = json.dumps(rd_stats, sort_keys=True, indent=4, default=numpyint_to_int)
                 print(json_string)
                 try:
-                    json.dump(json.dumps(rd_stats, sort_keys=True, indent=4), outfile)
+                    json.dump(json_string, outfile)
                 except TypeError:
                     print("Error in file: {}, start: {} and end: {}".format(file_name, start, end))
 

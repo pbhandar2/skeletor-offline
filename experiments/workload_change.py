@@ -9,6 +9,9 @@ import matplotlib
 matplotlib.use("agg")
 import matplotlib.pyplot as plt
 
+def default(o):
+    return int(o)
+
 
 def main(data_dir, data_type, file_name_filer=None):
     print("Called main")
