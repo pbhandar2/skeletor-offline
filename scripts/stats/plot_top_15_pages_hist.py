@@ -7,7 +7,7 @@ def generate_reuse_data(file_loc, type, output_dir):
     processor.open_file(file_loc, "../trace_config.json", type)
     profiler = processor.get_metric_extractor()
     profiler.extract_metric()
-    profiler.plot_reuse_dist_top_k_pages(15, output_dir)
+    profiler.plot_reuse_dist_top_k_pages(20, output_dir)
     return profiler.metrics["entropy"]
 
 

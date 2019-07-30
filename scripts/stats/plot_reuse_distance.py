@@ -10,10 +10,15 @@ from scipy.stats import describe
 def default(o):
 	return int(o)
 
-file_name = "web_1.csv.gz_4096.csv"
+file_name = "./test/data/web_1.csv.gz_512.csv"
 
 if len(sys.argv) > 1:
 	file_name = sys.argv[1]
+
+if len(sys.argv) > 2:
+	block_size = int(sys.argv[2])
+else:
+	block_size = 4096
 
 c = Cachecow();
 
@@ -41,6 +46,7 @@ from collections import Counter
 limit = 1000
 import numpy as np
 width = 1
+
 
 import matplotlib.pyplot as plt
 plt.figure(figsize=(100,30))

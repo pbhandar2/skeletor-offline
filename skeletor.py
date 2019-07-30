@@ -14,6 +14,7 @@ from traceReader.tarReader import TARReader
 from profiler.ioProfiler import IOProfiler
 from profiler.metricExtractor import MetricExtractor
 from lib.general import check_config
+from const import *
 
 
 class Skeletor:
@@ -45,14 +46,14 @@ class Skeletor:
                 make sure that you have the config file set up correctly with the correct
                 trace_type name.""")
 
-    def get_metric_extractor(self):
+    def get_metric_extractor(self, window_size=DEF_WINDOW_SIZE):
         """
         Returns the next line of the trace file.
         """
 
         if self.reader:
             if self.profiler is None:
-                self.profiler = MetricExtractor(self.reader)
+                self.profiler = MetricExtractor(self.reader, window_size)
         else:
             raise Exception("You need to open a file using open_file in order to get data to plot.")
 

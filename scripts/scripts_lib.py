@@ -4,8 +4,10 @@ from collections import Counter
 import math, json, os
 import pandas as pd
 
+
 def default(o):
     return int(o)
+
 
 def get_percentiles(hit_rate_array, max_hit_rate, percentiles):
     percentiles_array = []

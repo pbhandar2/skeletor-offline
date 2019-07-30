@@ -47,11 +47,11 @@ def main():
 
     pdb.set_trace()
     #
-    # ts = pd.DataFrame({
-    #     "ts": ts[:limit],
-    #     "id": np.ones(limit),
-    #     "time": np.arange(limit)
-    # });
+    ts = pd.DataFrame({
+        "ts": ts[:limit],
+        "id": np.ones(limit),
+        "time": np.arange(limit)
+    });
 
     extracted_features = extract_features(ts, column_id="id", column_sort="time", column_value="ts", n_jobs=8, show_warnings=False,
                                                           default_fc_parameters=EfficientFCParameters())

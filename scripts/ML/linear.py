@@ -1,13 +1,11 @@
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.datasets import make_regression
+import numpy as np
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 
-import numpy as np
 
-
-ml_type="random_forest"
+ml_type="linear"
 code="1M"
-f = open("summary_{}.csv".format(code))
+f = open("../summary_{}.csv".format(code))
 line = f.readline()
 
 raw_data = []
@@ -39,10 +37,12 @@ from sklearn.preprocessing import normalize
 #print(data[:, 1:-1])
 trainx, testx, trainy, testy = train_test_split(data[:,:-1], data[:, -1], test_size=0.1, random_state=42)
 
-
-regr_1 = RandomForestRegressor(max_depth=2, random_state=0,
-                             n_estimators=100)
+regr_1 = LinearRegression()
 regr_1.fit(trainx[:, 1:], trainy)
+
+print("TESTX")
+print(testx[:,1:])
+print(testx[:,0])
 
 pred = regr_1.predict(testx[:,1:].astype('float'))
 
@@ -103,5 +103,3 @@ plt.tight_layout()
 plt.close()
 
 # plt.show()
-
-

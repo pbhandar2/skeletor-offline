@@ -2,7 +2,7 @@
 	The script takes the location of a folder as an input and creates access histogram for all files in the folder. 
 '''
 
-import sys, os
+import sys, os, json
 
 sys.path.append('../')
 

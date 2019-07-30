@@ -7,3 +7,4 @@ Author: Pranav Bhandari <bhandaripranav94@gmail.com> 2018/11
 
 from skeletor.traceReader.AbstractReader import AbstractReader
 from skeletor.traceReader.gzReader import gzReader
+from lib import general

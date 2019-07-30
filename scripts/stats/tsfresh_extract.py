@@ -12,6 +12,7 @@ def main():
     # df.insert(1, "id", pd.Series([1]*len(df), dtype='int32'))
 
     print(df.head())
+    print(len(df))
 
     limit = int(sys.argv[3])
 

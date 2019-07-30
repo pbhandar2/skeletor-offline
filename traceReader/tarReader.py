@@ -31,6 +31,7 @@ class TARReader(AbstractReader):
         self.clock = config["clock"]
         self.file_name = file_loc.split('/')[-1]
         self.done = None
+        self.page_size = config["page_size"]
 
         self.data = {}
         for key in self.fields:

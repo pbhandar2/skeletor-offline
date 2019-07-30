@@ -16,11 +16,11 @@ def main(file_name, output_folder):
 
 	r = c.open(file_name,"c","c", **params)
 	num_req = c.num_of_req()
-	profiler = c.profiler(algorithm="ARC", cache_size=num_req, bin_size=1)
+	profiler = c.profiler(algorithm="ARC", cache_size=math.floor(num_req*0.8), bin_size=1)
 	hit_rate = profiler.get_hit_ratio()
 	max_hit_rate = hit_rate[-1]
 
-	hit_rate_string = "\n".join(hit_rate)
+	hit_rate_string = "\n".join(str(h) for h in hit_rate)
 
 	# write the hit ratio to a file 
 	with open("{}/arc_HR_{}.csv".format(output_folder, file_name), 'w+') as f:

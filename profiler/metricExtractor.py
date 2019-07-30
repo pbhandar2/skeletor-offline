@@ -26,7 +26,7 @@ from collections import defaultdict, Counter
 
 
 class MetricExtractor():
-    def __init__(self, reader, window_size=DEF_WINDOW_SIZE):
+    def __init__(self, reader, window_size):
 
         assert isinstance(reader, AbstractReader), \
             "This is not a valid reader: {}".format(reader)
@@ -82,11 +82,12 @@ class MetricExtractor():
             cur_data = self.reader.get_next_line_data()
             cur_line += 1
 
-            if (self.reader.clock.cur_time - window_start_time).total_seconds() >= self.window_size:
+            if self.reader.clock.get_time_diff(window_start_time) >= self.window_size:
                 self.window_times.append((window_start_time, self.reader.clock.cur_time))
                 self.window_index.append((window_start_index, cur_line))
                 window_start_time = self.reader.clock.cur_time
                 window_start_index = cur_line
+                print("A window done")
 
         pdf = list(map(lambda k: k/self.reader.num_lines, list(self.reuse_distance_count.values())))
         self.metrics["entropy"] = entropy(pdf)
@@ -348,6 +349,7 @@ class MetricExtractor():
         plt.close()
 
     def plot_reuse_dist_over_time_per_page(self, reuse_distance_array, page_rank, output_dir):
+        print(reuse_distance_array[:10])
         plot_name = "{}_reuse_dist_{}.png".format(self.reader.file_loc, page_rank)
         plot_dir = os.path.join(output_dir, plot_name)
         plt.plot(reuse_distance_array)

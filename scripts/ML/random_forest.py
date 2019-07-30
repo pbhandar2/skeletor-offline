@@ -1,11 +1,18 @@
-import numpy as np
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
+import numpy as np
+import math
 
 
-ml_type="linear"
+
+
+ml_type="random_forest"
 code="1M"
-f = open("summary_{}.csv".format(code))
+f = open("../summary_{}.csv".format(code))
 line = f.readline()
 
 raw_data = []
@@ -18,7 +25,7 @@ while line:
     variance = float(line_split[3])
     skew = float(line_split[4])
     kurtosis = float(line_split[5])
-    size = float(line_split[6])
+    size = math.ceil(float(line_split[6]))
     unique_object_ratio = float(line_split[9])
 
     raw_data.append([name, unique_object_ratio, mean, variance, skew, kurtosis, size])
@@ -37,12 +44,13 @@ from sklearn.preprocessing import normalize
 #print(data[:, 1:-1])
 trainx, testx, trainy, testy = train_test_split(data[:,:-1], data[:, -1], test_size=0.1, random_state=42)
 
-regr_1 = LinearRegression()
-regr_1.fit(trainx[:, 1:], trainy)
 
-print("TESTX")
-print(testx[:,1:])
-print(testx[:,0])
+regr_1 = RandomForestRegressor(
+    max_depth=4,
+    random_state=0,
+    n_estimators=200)
+
+regr_1.fit(trainx[:, 1:], trainy)
 
 pred = regr_1.predict(testx[:,1:].astype('float'))
 
@@ -69,7 +77,7 @@ average_error = total_error/len(pred)
 print("Error: {} = {}MB".format(average_error, average_error*4/1024))
 
 
-import matplotlib.pyplot as plt
+
 
 
 
@@ -97,9 +105,15 @@ plt.ylabel("Log Relative Error", fontsize=10)
 plt.xlabel("Traces", fontsize=10)
 
 plt.subplots_adjust(hspace=1)
-
-plt.savefig("{}_{}.png".format(ml_type, code))
 plt.tight_layout()
+
+plt.savefig("./{}_{}.png".format(ml_type, code))
+
+
+
+plt.show()
+print("DONE")
+
 plt.close()
 
-# plt.show()
+

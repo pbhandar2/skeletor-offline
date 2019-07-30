@@ -53,9 +53,9 @@
     "file_format": "tar",
     "delimiter": " ",
     "block_size": 512,
-    "page_size": 4096,
+    "page_size": 512,
     "clock_config": {
-      "type": "timestamp",
+      "type": "relative",
       "unit": "ns"
     },
     "block_type": "number",

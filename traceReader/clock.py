@@ -29,6 +29,14 @@ class Clock():
 
                 self.cur_time = datetime.fromtimestamp(time // 1e9)
 
+        elif self.type == "relative":
+
+            if self.unit == "ns":
+                if not self.start_time:
+                    self.start_time = time // 1e9
+
+                self.cur_time = time // 1e9
+
         self.time_elasped = self.cur_time - self.start_time
 
         return self.cur_time
@@ -41,6 +49,15 @@ class Clock():
 
     def get_time_elasped(self):
         return self.time_elasped
+
+    def get_time_diff(self, time_value):
+        if self.type == "relative":
+            if self.unit == "ns":
+                return (self.cur_time - time_value)//1e9
+        elif self.type == "windows" or self.type == "timestamp":
+            return (self.cur_time - time_value).total_seconds()
+
+
 
 
 
