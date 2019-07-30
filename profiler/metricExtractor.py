@@ -26,7 +26,7 @@ from collections import defaultdict, Counter
 
 
 class MetricExtractor():
-    def __init__(self, reader, window_size):
+    def __init__(self, reader, window_size=DEF_WINDOW_SIZE):
 
         assert isinstance(reader, AbstractReader), \
             "This is not a valid reader: {}".format(reader)
@@ -37,7 +37,7 @@ class MetricExtractor():
         self.reuse_distance_dict = defaultdict(list)
         self.reuse_distance_count = Counter()
         self.page_accessed = set()
-        self.window_size = DEF_WINDOW_SIZE
+        self.window_size = window_size
         self.window_times = []
         self.window_index = []
         self.peaks = None
