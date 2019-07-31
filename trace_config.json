@@ -5,7 +5,7 @@
     "delimiter": ",",
     "format": "gz",
     "block_size": 512,
-    "page_size": 4096,
+    "page_size": 512,
     "clock_config": {
       "type": "windows",
       "unit": "100nano",

@@ -92,7 +92,7 @@ class Skeletor:
         reuse_distance_array = self.profiler.reuse_distance_array
 
         plt.figure()
-        plt.title("Hit Rate Curve for each day of FIU trace \n : {}".format(file_name))
+        plt.title("Hit Rate Curve for each day of trace \n : {}".format(file_name))
         plt.xlabel("Cache Size")
         plt.ylabel("Hit Rate")
 
