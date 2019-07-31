@@ -84,13 +84,13 @@ class MetricExtractor():
 
 
             if self.reader.clock.get_time_diff(window_start_time) >= self.window_size:
-                print(self.reader.clock.get_time_diff(window_start_time))
-                print(self.window_size)
+                #print(self.reader.clock.get_time_diff(window_start_time))
+                #print(self.window_size)
                 self.window_times.append((window_start_time, self.reader.clock.cur_time))
                 self.window_index.append((window_start_index, cur_line))
                 window_start_time = self.reader.clock.cur_time
                 window_start_index = cur_line
-                print("A window done")
+                #print("A window done")
 
         pdf = list(map(lambda k: k/self.reader.num_lines, list(self.reuse_distance_count.values())))
         self.metrics["entropy"] = entropy(pdf)
